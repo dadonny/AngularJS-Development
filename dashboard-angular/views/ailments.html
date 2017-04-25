@@ -1,0 +1,167 @@
+<!-- start: PAGE TITLE -->
+<section id="page-title">
+    <div class="row">
+        <div class="col-sm-8">
+            <h1 class="mainTitle" translate="sidebar.nav.dashboard.AILMENTS">{{ mainTitle }}</h1>
+        </div>
+        <!--<div ncy-breadcrumb></div>-->
+    </div>
+</section>
+<!-- end: PAGE TITLE -->
+<!-- start: YOUR CONTENT HERE -->
+<div class="container-fluid container-fullw bg-white">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ailments" id="ailments" ng-controller="AilmentsCtrl">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" class="new-ailment">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-3 col-sm-offset-9 text-right">
+                                        <button class="btn btn-default" ng-click="addAilment()">
+                                            <i class="fa fa-plus"></i>
+                                            Add ailment
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="search-filter input-group well">
+                                    <input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button">
+                                            <i class="fa fa-search"></i> Search
+                                        </button>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="ailment-item" ng-class="{starred: ailment.starred}" ng-repeat="ailment in ailments | filter:searchText">
+                            <td>
+                                <h4 editable-text="ailment.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, ailment)" e-required>{{ailment.name}}</h4>
+                            </td>
+                            <td class="ailment-control">
+                                <button class="btn btn-primary" ng-click="openAside(ailment)"><i class="fa fa-edit"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <script type="text/ng-template" id="asideContent.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{ailment.name}}</h3>
+                    </div>
+                    <div class="container-fluid container-fullw modal-body">
+                        <div class="row">
+                            <tabset class="tabbable">
+                                <tab heading="Info">
+                                    <div class="form-group">
+                                        <div ng-class="{ 'has-error' : !ailment.name && !isNew  }">
+                                            <label>Name*</label>
+                                            <div>
+                                                <input style="width:100%;" type="text" ng-model="ailment.name" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Source Url</label>
+                                            <div>
+                                                <input style="width:100%;" type="text" ng-model="ailment.sourceUrl" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p>Cannabinoids effects ranges</p>
+                                    <h4>THC From: <input ng-model="ailment.thcFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcTo" style="width:120px;" type="number" step="any" /></h4>
+                                    <div range-slider min="0" max="60" model-min="ailment.thcFrom" model-max="ailment.thcTo" step="0,01" decimal-places="2"></div>
+                                    <div style="text-align: center;position: relative;top: -25px;" class="himanVal">{{((ailment.thcTo-ailment.thcFrom)/2+ailment.thcFrom).toFixed(4)}}±{{((ailment.thcTo-ailment.thcFrom)/2).toFixed(4)}}%</div>
+
+                                    <h4>CBD From: <input ng-model="ailment.cbdFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.cbdTo" style="width:120px;" type="number" step="any" /></h4>
+                                    <div range-slider min="0" max="20" step="step" model-min="ailment.cbdFrom" model-max="ailment.cbdTo" step="0,01" decimal-places="2"></div>
+                                    <div style="text-align: center;position: relative;top: -25px;" class="himanVal">{{((ailment.cbdTo-ailment.cbdFrom)/2+ailment.cbdFrom).toFixed(4)}}±{{((ailment.cbdTo-ailment.cbdFrom)/2).toFixed(4)}}%</div>
+
+                                    <h4>CBN From: <input ng-model="ailment.cbnFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.cbnTo" style="width:120px;" type="number" step="any" /></h4>
+                                    <div range-slider min="0" max="2" model-min="ailment.cbnFrom" model-max="ailment.cbnTo" step="0,01" decimal-places="2"></div>
+                                    <div style="text-align: center;position: relative;top: -25px;" class="himanVal">{{((ailment.cbnTo-ailment.cbnFrom)/2+ailment.cbnFrom).toFixed(4)}}±{{((ailment.cbnTo-ailment.cbnFrom)/2).toFixed(4)}}%</div>
+
+                                    <h4>CBC From: <input ng-model="ailment.cbcFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.cbcTo" style="width:120px;" type="number" step="any" /></h4>
+                                    <div range-slider min="0" max="1" model-min="ailment.cbcFrom" model-max="ailment.cbcTo" step="0,01" decimal-places="2"></div>
+                                    <div style="text-align: center;position: relative;top: -25px;" class="himanVal">{{((ailment.cbcTo-ailment.cbcFrom)/2+ailment.cbcFrom).toFixed(4)}}±{{((ailment.cbcTo-ailment.cbcFrom)/2).toFixed(4)}}%</div>
+
+                                    <h4>THCV From: <input ng-model="ailment.thcvFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcvTo" style="width:120px;" type="number" step="any" /></h4>
+                                    <div range-slider min="0" max="2" model-min="ailment.thcvFrom" model-max="ailment.thcvTo" step="0,01" decimal-places="2"></div>
+                                    <div style="text-align: center;position: relative;top: -25px;" class="himanVal">{{((ailment.thcvTo-ailment.thcvFrom)/2+ailment.thcvFrom).toFixed(4)}}±{{((ailment.thcvTo-ailment.thcvFrom)/2).toFixed(4)}}%</div>
+
+                                    <h4>CBG From: <input ng-model="ailment.cbgFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.cbgTo" style="width:120px;" type="number" step="any" /></h4>
+                                    <div range-slider min="0" max="1.5" model-min="ailment.cbgFrom" model-max="ailment.cbgTo" step="0,01" decimal-places="2"></div>
+                                    <div style="text-align: center;position: relative;top: -25px;" class="himanVal">{{((ailment.cbgTo-ailment.cbgFrom)/2+ailment.cbgFrom).toFixed(4)}}±{{((ailment.cbgTo-ailment.cbgFrom)/2).toFixed(4)}}%</div>
+                                </tab>
+                                <tab heading="Effective consumption methods">
+                                    <div ng-init="ailmentform.$show();" e-form="ailmentform" editable-checklist="checkedConsumptionmethods.methods" e-ng-options="s.id as s.name for s in allConsumptionmethods">
+                                        {{ showStatus() }}
+                                    </div>
+                                </tab>
+                                <tab heading="Effective strain types">
+                                    <div ng-repeat="type in types">
+                                        <label><input type="checkbox" ng-model="type.checked"><span style=" margin-left: 7px; margin-right: 10px;">{{type.name}}</span></label>
+                                    </div>
+                                </tab>
+                                <tab heading="THC Levels">
+                                    <h4>Never From: <input ng-model="ailment.thcLevelNeverFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcLevelNeverTo" style="width:120px;" type="number" step="any" /></h4>
+
+
+                                    <h4>Rarely From: <input ng-model="ailment.thcLevelRarelyFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcLevelRarelyTo" style="width:120px;" type="number" step="any" /></h4>
+
+
+                                    <h4>Moderate From: <input ng-model="ailment.thcLevelModerateFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcLevelModerateTo" style="width:120px;" type="number" step="any" /></h4>
+
+
+                                    <h4>Often From: <input ng-model="ailment.thcLevelOftenFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcLevelOftenTo" style="width:120px;" type="number" step="any" /></h4>
+
+
+                                    <h4>Daily From: <input ng-model="ailment.thcLevelDailyFrom" style="width:120px;" type="number" step="any" /> to: <input ng-model="ailment.thcLevelDailyTo" style="width:120px;" type="number" step="any" /></h4>
+
+                                </tab>
+                                <tab heading="Compatible Strains" ng-show="ailment.id">
+                                    <div class="input-block">
+                                        <div>
+                                            <label>Cannabis experience</label>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    {{cannabisExperience.name}} <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li ng-repeat="experience in cannabisExperiences"><a href="#" ng-click="cannabisExperience.name = experience.name;cannabisExperience.id = experience.id">{{experience.name}}</a></li>
+                                                </ul> 
+                                            </div>
+                                            <a ng-click="getRecommendedStrains()" class="btn btn-default" href="#" style="background-color: #007AFF;color: white;">Check It</a>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 20px;">
+                                        <table ng-show="recommendedStrains" class="table table-striped">
+                                            <tr ng-repeat="strain in recommendedStrains">
+                                                <td data-title="'Name'">{{strain.name || '' }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </tab>
+                            </tabset>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-right fixed-footer">
+                        <form class="btn-group" editable-form name="ailmentform">
+                            <button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+                            <button class="btn btn-danger" ng-click="remove($event)"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+                        </form>
+                    </div>
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end: YOUR CONTENT HERE

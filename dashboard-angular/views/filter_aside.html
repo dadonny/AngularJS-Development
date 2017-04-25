@@ -1,0 +1,124 @@
+<div class="modal-body container-fluid container-fullw" style="overflow: hidden;">
+    <div class="form-group">
+
+    <h1>Filter - {{filter.label}}</h1>
+    <div ng-switch="filter.id">
+
+        <!-- AGE -->
+        <div ng-switch-when="age">
+            <div class="col col-sm-6">
+                <div range-slider min="0" max="120" step="step" model-min="filterObj.ageFrom" model-max="filterObj.ageTo" step="1" decimal-places="0"></div>
+            </div>
+            <div class="col col-sm-6" style="padding-top: 10px;">
+                <div class="col col-sm-6" style="white-space: nowrap">
+                    From:<input ng-model="filterObj.ageFrom" style="width:90%"  type="number" step="any" />
+                </div>
+                <div  class="col col-sm-6"  style="white-space: nowrap">
+                    to: <input ng-model="filterObj.ageTo"  style="width:90%" type="number" step="any" />
+                </div>
+            </div>
+        </div>
+
+        <!-- WIGHT -->
+        <div ng-switch-when="weight">
+            <div class="col col-sm-6">
+                <div range-slider min="0" max="300" step="step" model-min="filterObj.weightFrom" model-max="filterObj.weightTo" step="1" decimal-places="0"></div>
+            </div>
+            <div class="col col-sm-6" style="padding-top: 10px;">
+                <div class="col col-sm-6" style="white-space: nowrap">
+                    From:<input ng-model="filterObj.weightFrom" style="width:90%"  type="number" step="any" />
+                </div>
+                <div  class="col col-sm-6"  style="white-space: nowrap">
+                    to: <input ng-model="filterObj.weightTo"  style="width:90%" type="number" step="any" />
+                </div>
+            </div>
+        </div>
+
+        <!-- GENDER -->
+        <div ng-switch-when="gender">
+            <form class="btn-group" editable-form name="">
+                <button class="btn btn-default" ng-click="selectGender(0,$event)" ng-class="{'btn-primary':(filterObj.gender===0 || filterObj.gender==='')}">Female</button>
+                <button class="btn btn-default" ng-click="selectGender(1,$event)" ng-class="{'btn-primary':(filterObj.gender===1 || filterObj.gender==='')}">Male </button>
+            </form>
+        </div>
+
+        <!--cannabinoid -->
+        <div ng-switch-when="cannabisExperience">
+            <form class="btn-group" editable-form name="">
+                <button class="btn btn-default"
+                        ng-repeat="c in filter.list"
+                        ng-click="selectCanab(c,$event)"
+                        ng-class="{'btn-primary':c.selected}">{{c.name}}</button>
+                <!--<button class="btn btn-default" ng-click="selectCanab(21,$event)" ng-class="{'btn-primary':(filterObj.cannabinoid===21 || filterObj.cannabinoid==='')}">Rarely</button>-->
+                <!--<button class="btn btn-default" ng-click="selectCanab(41,$event)" ng-class="{'btn-primary':(filterObj.cannabinoid===41 || filterObj.cannabinoid==='')}">Moderate</button>-->
+                <!--<button class="btn btn-default" ng-click="selectCanab(61,$event)" ng-class="{'btn-primary':(filterObj.cannabinoid===61 || filterObj.cannabinoid==='')}">Often</button>-->
+                <!--<button class="btn btn-default" ng-click="selectCanab(81,$event)" ng-class="{'btn-primary':(filterObj.cannabinoid===81 || filterObj.cannabinoid==='')}">Daily</button>-->
+            </form>
+        </div>
+        <!-- usstates -->
+        <div ng-switch-when="usstates">
+            <div class="form-group">
+                <div style="overflow: scroll; overflow-x: hidden; " >
+                        <button class="btn btn-default btn-xs"
+                                ng-repeat="state in filter.list"
+                                ng-class="{'btn-primary':state.selected}"
+                                ng-click="selectState(state)">
+                            {{state.name}}
+                        </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ailments -->
+        <div ng-switch-when="ailments">
+            <div class="form-group">
+                <div style="overflow: scroll; overflow-x: hidden; " >
+                    <button class="btn btn-default btn-xs"
+                            ng-repeat="a in filter.list"
+                            ng-class="{'btn-primary':a.selected}"
+                            ng-click="selectAilment(a)">
+                        {{a.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strain type -->
+        <div ng-switch-when="strainType">
+            <div class="form-group">
+                <div style="overflow: scroll; overflow-x: hidden; " >
+                    <button class="btn btn-default btn-xs"
+                            ng-repeat="type in filter.list"
+                            ng-class="{'btn-primary':type.selected}"
+                            ng-click="selectStrainType(type)">
+                        {{type.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side effect -->
+        <div ng-switch-when="sideEffect">
+            <div class="form-group">
+                <div style="overflow: scroll; overflow-x: hidden; " >
+                    <button class="btn btn-default btn-xs"
+                            ng-repeat="effect in filter.list"
+                            ng-class="{'btn-primary':effect.selected}"
+                            ng-click="selectSideEffect(effect)">
+                        {{effect.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+</div>
+<div class="modal-footer text-right">
+    <button class="btn btn-danger" ng-click="reset($event)"><i class="fa fa-close"></i> Reset</button>
+    <form class="btn-group" editable-form name="">
+        <button class="btn btn-success" ng-click="apply($event)"><i class="fa fa-save"></i> Apply </button>
+        <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+    </form>
+</div>

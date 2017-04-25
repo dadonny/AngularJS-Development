@@ -1,0 +1,240 @@
+<!-- start: PAGE TITLE -->
+<style>
+    .input-block {
+        display: inline-block;
+        margin-right: 4px;
+    }
+</style>
+<section id="page-title">
+    <div class="row">
+        <div class="col-sm-8">
+            <h1 class="mainTitle" translate="sidebar.nav.dashboard.PRODUCTS">{{ mainTitle }}</h1>
+        </div>
+        <!--<div ncy-breadcrumb></div>-->
+    </div>
+</section>
+<!-- end: PAGE TITLE -->
+<script type="text/ng-template" id="asideContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{product.name || '' }}</h3>
+        <div class="alert alert-danger" role="alert" ng-show="isNotValidData" ng-init="isNotValidData = false">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Not Valid Data
+        </div>
+    </div>
+    <div class="modal-body container-fluid container-fullw">
+        <tabset class="tabbable">
+            <tab heading="Info">
+                <div> 
+                    <div class="fileUpload btn btn-primary">
+                        <span><i class="fa fa-pencil"></i></span>
+                        <input type="file" class="upload" id="fileInput" />
+                    </div>
+
+                    <span class="btn btn-success" ng-show="showCrop" ng-click="applyCrop();"> <i class="fa fa-check"></i> </span>
+                    <span class="btn btn-danger" ng-show="showCrop" ng-click="showCrop=false"> <i class="fa fa-times"></i> </span>
+                    <div class="cropArea" ng-show="showCrop">
+                        <img-crop style="background: inherit;" image="sourceImage" result-image="croppedImage" area-type="square"></img-crop>
+                    </div>
+
+
+
+
+                    <div class="method_foto_rect greywhitebottom_rect" style=" height: 240px; width: 240px;" ng-if="!obj.flow.files.length && !noImage" ng-show="showCrop">
+                        <div style="left: 6px; top: 6px; position: absolute; height: 228px; width: 228px; overflow: hidden;">
+                            <div class="method_name" style="top: 170px; height: 58px; line-height: 57px; width: 228px; z-index: 2; text-align: center;">{{product.name}}</div>
+                            <img id="croppedImage" alt="{{ product.name }}" ng-src="{{croppedImage}}" style="position: absolute; height: 228px; width: 228px; overflow: hidden;">
+                        </div>
+                    </div>
+                    <div class="method_foto_rect greywhitebottom_rect" style=" height: 240px; width: 240px;" ng-show="!showCrop">
+                        <div style="left: 6px; top: 6px; position: absolute; height: 228px; width: 228px; overflow: hidden;">
+                            <div class="method_name" style="top: 170px; height: 58px; line-height: 57px; width: 228px; z-index: 2; text-align: center;">{{product.name}}</div>
+                            <img alt="{{ product.name }}" data-ng-src="{{ image }}" style="position: absolute; height: 228px; width: 228px; overflow: hidden;">
+                        </div>
+                    </div>
+
+
+                    <!--<div class="fileUpload btn btn-primary">-->
+                        <!--<span><i class="fa fa-pencil"></i>Hi-res</span>-->
+                        <!--<input type="file" class="upload" id="fileInput_hires" />-->
+                    <!--</div>-->
+
+                    <!--<span class="btn btn-success" ng-show="new_hires" ng-click="applyCrop_hires();"> <i class="fa fa-check"></i> </span>-->
+                    <!--<span class="btn btn-danger" ng-show="new_hires" ng-click="clearHiRes()"> <i class="fa fa-times"></i> </span>-->
+                    <!--&lt;!&ndash;<div class="cropArea" ng-show="showCrop_hires">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<img-crop result-image-size="1200" style="background: inherit;" image="sourceImage_hires" result-image="croppedImage_hires"></img-crop>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+                    <!--<div class=" greywhitebottom_rect" style="height: 240px; width: 240px; background-size: contain; background-position: center center;background-repeat: no-repeat;background-color: #eee;"-->
+                         <!--ng-if="new_hires"-->
+                    <!--ng-style="{'background-image':'url('+new_hires+')'}">-->
+                    <!--</div>-->
+                    <!--<div class=" greywhitebottom_rect" style="height: 240px; width: 240px; background-size: contain; background-position: center center;background-repeat: no-repeat;background-color: #eee;"-->
+                         <!--ng-if="!new_hires"-->
+                         <!--ng-style="{'background-image':'url('+image_hires+')'}">-->
+                    <!--</div>-->
+
+
+
+                    <div class="form-group" ng-class="{ 'has-error' : !product.name && !isNew }">
+                        <label>Name*</label>
+                        <div>
+                            <input style="width: 100%;" type="text" ng-model="product.name" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <div>
+                            <div class="btn-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{product.category}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" style="overflow: scroll; overflow-x: hidden;">
+                                    <li ng-repeat="category in categories"><a href="#" ng-click="product.category = category.value; product.category = category.name;">{{category.name}}</a></li>
+                                </ul>
+                            </div>
+                            <!--<select ng-model="product.type" >
+                        <option ng-repeat="type in types" value="{{type.value}}" ng-selected="product.type==type.value">{{type.name}}</option>
+                    </select>-->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Company</label>
+                        <div>
+                            <input style="width: 100%;" type="text" ng-model="product.company" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <div>
+                            <textarea rows="15" style="width: 100%" id="description" ng-model="product.description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Highlights</label>
+                        <div>
+                            <textarea rows="15" style="width: 100%" id="features" ng-model="product.features" ng-keyup="bullettext_keyup($event)" ng-focus="bullettext_focus()"></textarea>
+                        </div>
+                    </div>
+                    <!--<div ng-controller="CkeditorCtrl">-->
+                        <!--<div ckeditor="options" ng-model="product.description" ready="onReady()"></div>-->
+                        <!--<div class="well margin-top-20">-->
+                            <!--{{product.description}}-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <div class="form-group">
+                        <label>Price</label>
+                        <div>
+                            <input style="width: 100%;" type="text" ng-model="product.price" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Featured</label>
+                        <div>
+                            <input style="" type="checkbox" ng-model="product.featured" />
+                        </div>
+                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label>Featured pos</label>-->
+                        <!--<div>-->
+                            <!--<input style="" type="text" ng-model="product.featuredPosition" />-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+            </tab>
+</tabset>
+</div>
+    <div class="modal-footer text-right">
+        <form class="btn-group" editable-form name="productform">
+            <button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+            <button class="btn btn-danger" ng-click="remove($event)"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+        </form>
+    </div>
+
+</script>
+
+<script type="text/ng-template" id="productTpl.html">
+    <div class="panel-heading border-light">
+        <h4 class="col-xs-8 panel-title text-bold no-padding vertical-align-middle">{{product.name || '' }}</h4>
+        <ul class="panel-heading-tabs no-border">
+            <li class="no-border">
+                <button class="btn btn-default" ng-click="edit($event, product)"><i class="fa fa-pencil"></i></button>
+            </li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Abbreviation</dt>
+            <dd>{{product.title ? product.title : ''}}</dd>
+            <dt>Formula</dt>
+            <dd>{{product.formula ? product.formula : ''}}</dd>
+            <dt>Molecular Mass</dt>
+            <dd>{{product.molecularMass ? product.molecularMass : ''}}</dd>
+            <dt>Boiling Point</dt>
+            <dd>{{product.boilingPoint ? product.boilingPoint : ''}}</dd>
+            <dt>Description</dt>
+            <dd>{{product.description ? product.description : ''}}</dd>
+        </dl>
+    </div>
+</script>
+<!-- start: YOUR CONTENT HERE -->
+<!-- start: PAGINATION TEMPLATE -->
+<style>
+    .pagination {
+        display: block;
+    }
+</style>
+<div class="container-fluid container-fullw bg-white">
+    <div class="row" ng-controller="ProductsCtrl">
+        <div class="container-fluid container-fullw bg-white">
+            <div class="row products" id="products">
+                <div class="col-sm-12">
+                    <div class="col-sm-3 col-sm-offset-9 text-right">
+                        <button class="btn btn-default" ng-click="addProduct()">
+                            <i class="fa fa-plus"></i>
+                            Add product
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div>
+                <div class="search-filter input-group well">
+                    <input type="text" class="form-control ng-valid ng-dirty ng-valid-parse ng-touched" placeholder="Search..." ng-change="tableParams.page(1);tableParams.reload();" ng-model="commonFilter">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fa fa-search"></i> Search
+                        </button>
+                    </span>
+                </div>
+                <table ng-table="tableParams" class="table table-striped">
+                    <tr ng-repeat="product in products">
+                        <td data-title="'Image'"><img style="height:100px;" ng-src="{{getImage(product.id)}}" alt="{{product.name}}"></td>
+                        <td data-title="'Name'">{{product.name || '' }}</td>
+                        <td data-title="'Company'">{{product.company || '' }}</td>
+                        <!--<td data-title="'Image'"><img style="height:100px;" ng-src="{{getImage(product.id)}}" alt="{{product.name}}"></td>-->
+                        <td data-title="'Description'">{{(product.description || '') | characters:50}}</td>
+                        <td data-title="'Price ($)'">{{product.price || '' }}</td>
+                        <td data-title="'Product Category'">{{product.category || '' }}</td>
+                        <td data-title="'Featured'">{{product.featured ? 'Yes' : 'No'}}</td>
+                        <td class="text-right" data-title="''">
+                            <button class="btn btn-default" ng-click="edit($event, product)"><i class="fa fa-pencil"></i></button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end: PAGINATION TEMPLATE -->

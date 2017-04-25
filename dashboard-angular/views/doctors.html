@@ -1,0 +1,468 @@
+﻿<style>
+    .pagination {
+        display: block;
+    }
+
+    .btn-group .btn.active {
+        border-color: blue !important;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+
+    .tags {
+        width: 100%;
+        color: black;
+        margin: 0px;
+    }
+
+    tag-item {
+        color: black;
+    }
+
+    tags-input *, tags-input :after, tags-input :before {
+        color: black !important;
+    }
+
+    .input-block {
+        display: inline-block;
+        margin-right: 4px;
+    }
+
+    .sweet-alert-custom {
+        background-color: #fff;
+        font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+        width: 478px;
+        padding: 17px;
+        border-radius: 5px;
+        text-align: center;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        margin-left: -256px;
+        margin-top: -200px;
+        overflow: hidden;
+        display: none;
+        z-index: 99999;
+    }
+
+        .sweet-alert-custom h2 {
+            color: #575757;
+            font-size: 30px;
+            text-align: center;
+            font-weight: 600;
+            text-transform: none;
+            position: relative;
+            margin: 25px 0;
+            padding: 0;
+            line-height: 40px;
+            display: block;
+        }
+
+        .sweet-alert-custom button.cancel {
+            background-color: #D0D0D0;
+        }
+
+        .sweet-alert-custom button {
+            background-color: #AEDEF4;
+            color: #fff;
+            border: none;
+            box-shadow: none;
+            font-size: 17px;
+            font-weight: 500;
+            -webkit-border-radius: 4px;
+            border-radius: 5px;
+            padding: 10px 32px;
+            margin: 26px 5px 0;
+            cursor: pointer;
+        }
+
+        .sweet-alert-custom button {
+            padding: 5px 32px !important;
+            box-shadow: none !important;
+        }
+
+    td.accepted {
+        width: 120px;
+    }
+</style>
+
+<!-- start: PAGE TITLE -->
+<section id="page-title">
+    <div class="row">
+        <div class="col-sm-8">
+
+            <h1 class="mainTitle" translate="sidebar.nav.dashboard.DOCTORS">{{ mainTitle }}</h1>
+        </div>
+        <!--<div ncy-breadcrumb></div>-->
+    </div>
+</section>
+<!-- end: PAGE TITLE -->
+<script type="text/ng-template" id="reviewsAsideContent.html">
+    <form name="reviewsform">
+        <div class="modal-header">
+            <h4>Reviews</h4>
+        </div>
+        <div class="modal-body container-fluid container-fullw">
+            <table ng-table="tableParams" class="table table-striped">
+                <tr ng-repeat="review in reviews">
+                    <td class="center">
+                        <img ng-if="review.gender" alt="image" class="img-circle" src="assets/images/avatar-1-small.jpg">
+                        <img ng-if="!review.gender" alt="image" class="img-circle" src="assets/images/avatar-2-small.jpg">
+                    </td>
+                    <td><span class="block"><span class="text-small text-light">{{review.dat | date:'mm /dd/yyyy h:mma '}}</span>{{ review.rewiewer}} </span><span>{{review.reviewText}}</span></td>
+                    <td class="center">
+                        <div class="cl-effect-13">
+                            <button class="btn btn-danger" ng-click="removeReview(review, doctor)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                    <td class="accepted">
+                        <span class="button-checkbox">
+                            <button type="button" data-id="{{review.id}}" class="btn" data-color="primary">Accepted</button>
+                            <input type="checkbox" data-id="{{review.id}}" class="hidden" ng-checked="review.accepted" />
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-repeat-end>
+                    <td></td>
+                    <td><span id="loading-label" ng-if="!loadingStop">...Loading</span></td>
+                    <td></td>
+                    <td class="accepted"></td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="modal-footer text-right">
+            <form class="btn-group" editable-form name="doctorform">
+                <button class="btn btn-info" ng-click="close($event)">Close</button>
+            </form>
+        </div>
+</script>
+<script type="text/ng-template" id="requestsAsideContent.html">
+    <style>
+        .col-sm-5 div input {
+            width: 220px;
+        }
+
+        .modal-body.container-fluid.container-fullw .row {
+            margin-bottom: 12px;
+        }
+    </style>
+    <form name="requestsform">
+        <div class="modal-header">
+            <h4>Requests</h4>
+        </div>
+        <div class="modal-body container-fluid container-fullw">
+            <div class="row" ng-repeat-start="request in requests">
+                <div class="col-sm-4">
+                    {{request.dat | date:'mm /dd/yyyy h:mma '}}
+                </div>
+                <div class="col-sm-2" style="color:black">
+                    {{request.firstName + ' ' + request.lastName}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    <label>Email</label>
+                    <div>
+                        <input type="text" ng-model="request.email" ng-disabled="true" />
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <label>Phone</label>
+                    <div>
+                        <input type="text" ng-model="request.phone" ng-disabled="true" />
+                    </div>
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    <label>State</label>
+                    <div>
+                        <input type="text" ng-model="request.usState" ng-disabled="true" />
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <label>City</label>
+                    <div>
+                        <input type="text" ng-model="request.city" ng-disabled="true" />
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-danger" ng-click="removeRequest(request, doctor)"><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 15px;">
+                <div class="col-sm-5">
+                    <label>Medical Condition</label>
+                    <div>
+                        <input type="text" ng-model="request.ailment" ng-disabled="true" />
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <label>Contact me</label>
+                    <div>
+                        <input type="text" ng-model="request.contactMe" ng-disabled="true" />
+                    </div>
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+            </div>
+            <hr ng-repeat-end />
+            <div class="row">
+                <span id="loading-label-requests" ng-if="!loadingStop">...Loading</span>
+            </div>
+        </div>
+        <div class="modal-footer text-right">
+            <form class="btn-group">
+                <button class="btn btn-info" ng-click="close($event)">Close</button>
+            </form>
+        </div>
+</script>
+<script type="text/ng-template" id="asideContent.html">
+    <!--<div ng-init="showMap=false;" ng-show="showMap" ng-click="showMap=false;" class="sweet-overlay" tabindex="-1" style="opacity: 1.03; display: block;"></div>
+    <div ng-show="showMap" class="sweet-alert-custom showSweetAlert visible"
+         tabindex="-1"
+         data-custom-class=""
+         data-has-cancel-button="true"
+         data-has-confirm-button="true"
+         data-allow-ouside-click="true"
+         data-has-done-function="true"
+         data-timer="null"
+         style="display: block; top:190px;">
+        <h2>Choose doctor location</h2>
+        <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" events="map.events">
+            <ui-gmap-marker ng-repeat="m in map.markers" coords="m.coords" icon="m.icon" idkey="m.id"></ui-gmap-marker>
+        </ui-gmap-google-map>
+        <button ng-click="showMap=false;" class="cancel" tabindex="2" style="display: inline-block; box-shadow: none;">OK</button>
+    </div>-->
+    <form name="doctorform">
+        <div class="modal-header">
+            <h4>{{doctor.name}}</h4>
+            <div class="alert alert-danger" role="alert" ng-show="isNotValidData" ng-init="isNotValidData = false">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Not Valid Data
+            </div>
+        </div>
+        <div class="modal-body container-fluid container-fullw">
+            <div class="form-group">
+                <div class="input-block">
+                    <label>Walk-Ins*</label>
+                    <div>
+                        <input checked data-size="small" name="walkIns" ng-model="doctor.walkIns" e-name="walkIns" e-form="walkIns" type="checkbox" bootstrap-switch />
+                    </div>
+                </div>
+                <div class="input-block" ng-class="{ 'has-error' : !doctor.name && !isNew }">
+                    <label>Name*</label>
+                    <div>
+                        <input style="width:360px;" type="text" ng-model="doctor.name" e-name="name" e-form="doctorform" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-block" ng-class="{ 'has-error' : !doctor.usState && !isNew }">
+                    <label>State*</label>
+                    <div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{doctor.usState.name}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" style="overflow: scroll; overflow-x: hidden; height: 300px;">
+                                <li ng-repeat="code in usStates"><a href="#" ng-click="doctor.usState.name = code.name; doctor.usState.code = code.code;">{{code.name}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-block" ng-class="{ 'has-error' : !doctor.postcode && !isNew }">
+                    <label>Postcode*</label>
+                    <div>
+                        <input name="postcode" ng-pattern="/^\d\d\d\d\d$/" type="text" ng-model="doctor.postcode" e-name="postcode" e-form="doctorform" />
+                        <span ng-show="doctorform.postcode.$error.pattern" style="color:red">Postcode is invalid</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : !doctor.addressLine1 && !isNew }">
+                <label>Address Line 1*</label>
+                <div>
+                    <input style="width: 100%;" type="text" ng-model="doctor.addressLine1" e-name="addressLine1" e-form="doctorform" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Address Line 2</label>
+                <div>
+                    <input style="width: 100%;" type="text" ng-model="doctor.addressLine2" e-name="addressLine2" e-form="doctorform" />
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : (!doctor.hours || doctor.hours.length <= 0) && !isNew }">
+                <div>
+                    <label>Hours*</label>
+                </div>
+                <tags-input ng-model="doctor.hours"
+                            placeholder="Add a hours"
+                            min-length="1">
+                </tags-input>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : (!doctor.phones || doctor.phones.length <= 0) && !isNew }">
+                <div>
+                    <label>Phones* </label>
+                </div>
+                <tags-input ng-model="doctor.phones"
+                            placeholder="Add a phone"
+                            min-length="1">
+                </tags-input>
+            </div>
+
+            <div class="form-group">
+                <div class="input-block" ng-class="{ 'has-error' : !doctor.coordLat && !isNew }">
+                    <label>Latitude*</label>
+                    <div>
+                        <input step="any" type="number" ng-model="doctor.coordLat">
+                    </div>
+                </div>
+                <div class="input-block" ng-class="{ 'has-error' : !doctor.coordLng && !isNew }">
+                    <label>Longitude*</label>
+                    <div>
+                        <input step="any" type="number" ng-model="doctor.coordLng">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer text-right">
+            <form class="btn-group" editable-form name="doctorform">
+                <button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+                <button class="btn btn-danger" ng-click="remove($event)"><i class="fa fa-trash"></i></button>
+                <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+            </form>
+        </div>
+    </form>
+</script>
+
+<!-- start: YOUR CONTENT HERE -->
+<!-- start: PAGINATION TEMPLATE -->
+<div class="container-fluid container-fullw bg-white">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="container-fluid container-fullw bg-white">
+                <div class="row doctors" id="doctors" ng-controller="DoctorsCtrl">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3 col-sm-offset-9 text-right">
+                            <button class="btn btn-default" ng-click="adddoctor()">
+                                <i class="fa fa-plus"></i>
+                                Add doctor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-controller="DoctorsCtrl">
+                <div class="search-filter input-group well">
+                    <input type="text" class="form-control ng-valid ng-dirty ng-valid-parse ng-touched" placeholder="Search..." ng-change="params.page(1);params.reload();" ng-model="commonFilter">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fa fa-search"></i> Search
+                        </button>
+                    </span>
+                </div>
+                <script type="text/ng-template">
+                    <ul class="pager">
+                        <li ng-repeat="page in pages"
+                            ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+                            ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
+                            <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
+                            <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
+                        </li>
+                        <li>
+                            <div class="btn-group">
+                                <button type="button" ng-class="{'active':params.count() == 10}" ng-click="params.count(10)" class="btn btn-default">10</button>
+                                <button type="button" ng-class="{'active':params.count() == 25}" ng-click="params.count(25)" class="btn btn-default">25</button>
+                                <button type="button" ng-class="{'active':params.count() == 50}" ng-click="params.count(50)" class="btn btn-default">50</button>
+                                <button type="button" ng-class="{'active':params.count() == 100}" ng-click="params.count(100)" class="btn btn-default">100</button>
+                            </div>
+                        </li>
+                    </ul>
+                </script>
+                <table ng-table="tableParams" class="table table-striped">
+                    <tr ng-repeat-start="doctor in doctors">
+                        <td data-title="'Name'">{{doctor.name || '' }}</td>
+                        <td data-title="'Walk-Ins'">{{doctor.walkIns ? 'Walk-Ins' : ' ' }}</td>
+                        <td data-title="'State'">{{doctor.usState.name || '' }}</td>
+                        <td data-title="'Address'">{{doctor.addressLine1 + ', ' + (doctor.addressLine2 ? (doctor.addressLine2 + ', ') : '') + doctor.postcode  || '' }}</td>
+                        <td data-title="'Raiting Avg'">{{doctor.rating || '' }}</td>
+
+                        <td class="text-right" data-title="''">
+                            <button class="btn btn-default" ng-click="edit($event, doctor)"><i class="fa fa-pencil"></i></button>
+                            <a ng-click="openReviewsAside(doctor)" class="btn btn-default" href="#" style="background-color: #007AFF;color: white;">Reviews <span class="badge" style=" background-color: white; color: #007AFF;">{{doctor.reviewsCount}}</span></a>
+                            <a ng-click="openRequestsAside(doctor)" class="btn btn-default" href="#" style="background-color: #007AFF;color: white;">Requests <span class="badge" style=" background-color: white; color: #007AFF;">{{doctor.appointmentsCount}}</span></a>
+                        </td>
+                    </tr>
+                    <tr ng-if="doctor.showReviews" ng-repeat="review in doctor.reviews">
+                        <td></td>
+                        <td></td>
+                        <td class="center">
+                            <img ng-if="review.gender" alt="image" class="img-circle" src="assets/images/avatar-1-small.jpg">
+                            <img ng-if="!review.gender" alt="image" class="img-circle" src="assets/images/avatar-2-small.jpg">
+                        </td>
+                        <td><span class="block"><span class="text-small text-light">{{review.dat | date:'mm /dd/yyyy h:mma '}}</span>{{ review.rewiewer}} </span><span>{{review.reviewText}}</span></td>
+                        <td class="center">
+                            <div class="cl-effect-13">
+                                <a href ng-click="removeReview(review)">
+                                    Remove
+                                </a>
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr ng-repeat-end ng-if="doctor.showReviews">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><span ng-if="!doctor.loadingStop" in-view="lineInView(doctor)">...Loading</span></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end: PAGINATION TEMPLATE -->

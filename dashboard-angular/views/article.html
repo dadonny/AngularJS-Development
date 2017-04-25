@@ -1,0 +1,250 @@
+﻿<style>
+    .input-block {
+        display: inline-block;
+        margin-right: 4px;
+    }
+
+    .modal-body ul[dnd-list] {
+        padding-left: 0px;
+    }
+
+    .modal-body ul[dnd-list] .dndDraggingSource {
+        display: none;
+    }
+
+    .modal-body ul[dnd-list] .dndPlaceholder {
+        display: block;
+        background-color: #ddd;
+        min-height: 42px;
+    }
+
+    .modal-body ul[dnd-list] li {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: -1px;
+    }
+
+    .modal-body ul[dnd-list] li.selected {
+        background-color: #dff0d8;
+        color: #3c763d;
+    }
+
+    .btn-circle {
+        font-size: 20px;
+        color: #007AFF;
+        cursor:pointer;
+    }
+
+    .btn-circle:hover {
+        font-size: 20px;
+        color: #288fff;
+    }
+
+    .btn-remove {
+        float: right;
+    }
+
+    .btn-add-rows {
+        vertical-align: middle;
+        margin-left:10px;
+    }
+
+    .ng-table-pager {
+        display: none;
+    }
+</style>
+
+<section id="page-title">
+    <div class="row">
+        <div class="col-sm-8">
+            <h1 class="mainTitle" translate="sidebar.nav.dashboard.ARTICLE">{{ mainTitle }}</h1>
+        </div>
+        <!--<div ncy-breadcrumb></div>-->
+    </div>
+</section>
+
+<script type="text/ng-template" id="asideContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{article.name || '' }}</h3>
+        <div class="alert alert-danger" role="alert" ng-show="isNotValidData" ng-init="isNotValidData = false">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Not Valid Data
+        </div>
+    </div>
+    <div class="modal-body container-fluid container-fullw">
+
+        <div class="form-group" ng-class="{ 'has-error' : !article.title && !isNew }">
+            <label>Title*</label>
+            <div>
+                <textarea rows="2" style="width: 100%" ng-model="article.title"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{ 'has-error' : !article.publicationDate && !isNew }">
+            <label>Date Published*</label>
+            <p class="input-group">
+                <input type="text"
+                       class="form-control"
+                       datepicker-popup="{{format.format}}"
+                       datepicker-mode="format.popupMode"
+                       datepicker-options="format.options"
+                       ng-model="article.publicationDate"
+                       is-open="opened"
+                       ng-required="true"
+                       close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open($event)">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </button> </span>
+            </p>
+            <div >
+
+
+                <!--<textarea rows="2" style="width: 100%" ng-model="article.publicationDate"></textarea>-->
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{ 'has-error' : !article.sourceUrl && !isNew }">
+            <label>Source URL*</label>
+            <div>
+                <input style="width:100%;" type="text" ng-model="article.sourceUrl" />
+            </div>
+        </div>
+
+        <div class="fileUpload btn btn-primary" style="vertical-align: top; margin-top: 0px;">
+            <span><i class="fa fa-pencil"></i></span>
+            <input type="file" class="upload" id="fileInput" />
+        </div>
+
+        <img alt="{{ article.name }}" width="{{article.logoWidth}}" ng-if="article.logo" height="{{article.logoHeight}}" ng-show="!showCrop" ng-src="data:image/png;base64,{{article.logo}}">
+ 
+        <span class="btn btn-success" ng-show="showCrop" ng-click="saveCrop()"> <i class="fa fa-check"></i> </span>
+        <span class="btn btn-danger" ng-show="showCrop" ng-click="sourceImage='';croppedImage='';"> <i class="fa fa-times"></i> </span>
+        <div class="cropArea" ng-init="showCrop=false" ng-show="showCrop">
+            <img-crop area-type="rectangle"
+                      style="background: inherit;"
+                      image="sourceImage"
+                      result-image="croppedImage"
+                      result-width="myCroppedImageW"
+                      result-height="myCroppedImageH"
+                      result-x="myCroppedImageX"
+                      result-y="myCroppedImageY"
+                      original-width="myOriginalW"
+                      original-height="myOriginalH"
+                      original-crop-x="myOriginalX"
+                      original-crop-y="myOriginalY"
+                      original-crop-width="myCroppedOriginalW"
+                      original-crop-height="myCroppedOriginalH"></img-crop>
+        </div>
+        <div class="method_foto" ng-if="!obj.flow.files.length && !noImage" ng-show="showCrop">
+            <div style="margin-top: 20px; overflow: hidden;">
+                <img alt="{{ article.name }}" width="{{myCroppedImageW}}" height="{{myCroppedImageH}}" ng-src="{{croppedImage}}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Ailments</label>
+            <div>
+                <div class="btn-group dropdown" style="width: 93%;">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%">
+                        {{ailment.name}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="overflow: scroll; overflow-x: hidden; height: 300px;">
+                        <li ng-repeat="ail in ailments"><a href="#" ng-click="ailment.id = ail.id; ailment.name = ail.name;">{{ail.name}}</a></li>
+                    </ul>
+                </div>
+                 
+                <div style="display: inline-block;"><div style="padding-bottom: 4px;" class="btn-circle btn-add-rows glyphicon glyphicon-plus-sign" aria-hidden="true" ng-click="addAilment(ailment)"></div> </div> 
+            </div>
+        </div>
+
+        <ul dnd-list="article.ailments">
+            <li ng-repeat="item in article.ailments"
+                dnd-draggable="item"
+                dnd-moved="article.ailments.splice($index, 1)"
+                dnd-effect-allowed="move" 
+                ng-class="{'selected': models.selected === item}">
+                {{item.name}}
+
+                <span class="btn-circle glyphicon glyphicon-remove-circle btn-remove" aria-hidden="true" ng-click="removeAilment(item)"></span>   
+            </li>
+        </ul> 
+ 
+        <div class="form-group">
+            <label>Key Takeaways</label>
+            <div>
+                <input style="width: 93%;" type="text" ng-model="keyTakeaway" />
+
+                <div style="display: inline-block;"><div class="btn-circle btn-add-rows glyphicon glyphicon-plus-sign" aria-hidden="true" ng-click="addKey(keyTakeaway)"></div> </div>
+            </div>
+        </div>
+
+        <ul dnd-list="selectedKeyTakeaways">
+            <li ng-repeat="item in selectedKeyTakeaways"
+                dnd-draggable="item"
+                dnd-moved="selectedKeyTakeaways.splice($index, 1)"
+                dnd-effect-allowed="move"
+                ng-class="{'selected': models.selected === item}">
+                {{item.label}}
+
+                <span class="btn-circle glyphicon glyphicon-remove-circle btn-remove" aria-hidden="true" ng-click="removeKey(item)"></span>
+            </li>
+        </ul> 
+
+        <div class="form-group">
+            <label>Summary</label>
+
+            <div>
+                <textarea rows="3" style="width: 100%" ng-model="article.summary"></textarea>
+            </div>
+        </div>
+         
+    </div>
+    <div class="modal-footer text-right">
+        <form class="btn-group" editable-form name="articleform">
+            <button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+            <button class="btn btn-danger" ng-click="remove($event)"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+        </form>
+    </div>
+</script>
+<div class="container-fluid container-fullw bg-white">
+    <div class="row" ng-controller="ArticlesCtrl">
+        <div class="container-fluid container-fullw bg-white">
+            <div class="row articles" id="articles">
+                <div class="col-sm-12">
+                    <div class="col-sm-3 col-sm-offset-9 text-right">
+                        <button class="btn btn-default" ng-click="addArticle()">
+                            <i class="fa fa-plus"></i>
+                            Add article
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div>
+                <table ng-table="tableParams" class="table table-striped">
+                    <tr ng-repeat="article in articles">
+                        <td data-title="'Image'">
+                            <div>
+                                <img width="{{article.logoWidthMin}}" height="{{article.logoHeightMin}}" ng-src="{{getLogo(article.id)}}" alt="{{article.title}}">
+                            </div>
+                        </td>
+                        <td data-title="'Title'">{{article.title || '' }}</td>
+                        <td data-title="'Summary'">{{article.summary || '' }}</td>
+                        <td class="text-right" data-title="''">
+                            <button class="btn btn-default" ng-click="edit($event, article)"><i class="fa fa-pencil"></i></button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

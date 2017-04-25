@@ -1,0 +1,155 @@
+<!-- start: PAGE TITLE -->
+<section id="page-title">
+	<div class="row">
+		<div class="col-sm-8">
+			<h1 class="mainTitle" translate="sidebar.nav.dashboard.CANNABINOIDS">{{ mainTitle }}</h1>
+			<!-- <span class="mainDescription">List of cannabinoids</span> -->
+		</div>
+		<!--<div ncy-breadcrumb></div>-->
+	</div>
+</section>
+<!-- end: PAGE TITLE -->
+<script type="text/ng-template" id="asideContent.html" style="overflow-y: hidden;">
+    <div ng-init="showReviewHtml=false;" ng-show="showReviewHtml" ng-click="showReviewHtml=false;" class="sweet-overlay" tabindex="-1" style="opacity: 1.03; display: block;"></div>
+    <div ng-show="showReviewHtml" class="sweet-alert-custom showSweetAlert visible"
+         tabindex="-1"
+         data-custom-class=""
+         data-has-cancel-button="true"
+         data-has-confirm-button="true"
+         data-allow-ouside-click="true"
+         data-has-done-function="true"
+         data-timer="null"
+         style="display: block; top:220px;">
+        <div text-angular="text-angular" ng-model="cannabinoid.htmlReviewDesc"></div>
+        <button ng-click="showReviewHtml=false;" class="btn btn-default cancel" tabindex="2" style="display: inline-block; box-shadow: none; margin-top:5px;">Close</button>
+    </div>
+
+    <div ng-init="showFullHtml=false;" ng-show="showFullHtml" ng-click="showFullHtml=false;" class="sweet-overlay" tabindex="-1" style="opacity: 1.03; display: block;"></div>
+    <div ng-show="showFullHtml" class="sweet-alert-custom showSweetAlert visible"
+         tabindex="-1"
+         data-custom-class=""
+         data-has-cancel-button="true"
+         data-has-confirm-button="true"
+         data-allow-ouside-click="true"
+         data-has-done-function="true"
+         data-timer="null"
+         style="display: block; top:220px;">
+        <div text-angular="text-angular" ng-model="cannabinoid.htmlFullDesc"></div>
+        <button ng-click="showFullHtml=false;" class="btn btn-default cancel" tabindex="2" style="display: inline-block; box-shadow: none; margin-top:5px;">Close</button>
+    </div>
+
+	<div class="modal-header">
+		<h3 class="modal-title">{{cannabinoid.name}}</h3>
+        <div class="alert alert-danger" role="alert" ng-show="isNotValidData" ng-init="isNotValidData = false">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Not Valid Data
+        </div>
+	</div>
+	<div class="modal-body container-fluid container-fullw" style="overflow: hidden;">
+        <div class="form-group">
+            <div ng-class="{ 'has-error' : !cannabinoid.name }">
+                <label>Name*</label>
+                <div>
+                    <input style="width:100%;" type="text" ng-model="cannabinoid.name"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div ng-class="{ 'has-error' : !cannabinoid.title }">
+                <label>Abbreviation*</label>
+                <div>
+                    <input style="width:100%;" type="text" ng-model="cannabinoid.title" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div ng-class="{ 'has-error' : !cannabinoid.formula }">
+                <label>Formula*</label>
+                <div>
+                    <input style="width:100%;" type="text" ng-model="cannabinoid.formula" />
+                </div>
+            </div>
+        </div>
+		
+        <div class="form-group">
+            <div ng-class="{ 'has-error' : !cannabinoid.molecularMass }">
+                <label>Molecular Mass, g/mol*</label>
+                <div>
+                    <input style="width:100%;" type="number" step="any" ng-model="cannabinoid.molecularMass" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div ng-class="{ 'has-error' : !cannabinoid.boilingPoint }">
+                <label>Boiling Point, &deg;F*</label>
+                <div>
+                    <input style="width:100%;" type="number" ng-model="cannabinoid.boilingPoint" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary" ng-click="showReviewHtml = true;">Review HTML Description</button>
+            <button class="btn btn-primary" ng-click="showFullHtml = true;">Full HTML Description</button> 
+        </div>
+		
+        <div class="form-group">
+            <div>
+                <label>Description</label>
+                <textarea rows="20" style="width: 100%" ng-model="cannabinoid.description"></textarea>
+            </div>
+        </div>
+	</div>
+	<div class="modal-footer text-right">
+		<form class="btn-group" editable-form name="cannabinoidform">
+			<button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+			<button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+		</form>
+	</div>
+</script>
+
+
+<script type="text/ng-template" id="cannabinoidTpl.html">
+	<div class="panel-heading border-light">
+		<h4 class="col-xs-8 panel-title text-bold no-padding vertical-align-middle">{{cannabinoid.name}}</h4>
+		<ul class="panel-heading-tabs no-border">
+			<li class="no-border">
+			<button class="btn btn-default" ng-click="edit($event, cannabinoid)"><i class="fa fa-pencil"></i></button>
+			</li>
+		</ul>
+	</div>
+	<div class="panel-body">
+		<dl class="dl-horizontal">
+			<dt>Abbreviation</dt>
+			<dd>{{cannabinoid.title ? cannabinoid.title : ''}}</dd>
+			<dt>Formula</dt>
+			<dd>{{cannabinoid.formula ? cannabinoid.formula : ''}}</dd>
+			<dt>Molecular Mass, g/mol</dt>
+			<dd>{{cannabinoid.molecularMass ? cannabinoid.molecularMass : ''}}</dd>
+			<dt>Boiling Point, &deg;F</dt>
+			<dd>{{cannabinoid.boilingPoint ? cannabinoid.boilingPoint : ''}}</dd>
+			<!--<dt>Description</dt>-->
+			<!--<dd>{{cannabinoid.description ? cannabinoid.description : ''}}</dd>-->
+		</dl>
+	</div>
+</script>
+<!-- start: YOUR CONTENT HERE -->
+
+<div class="container-fluid container-fullw bg-white">
+	<div class="row cannabinoids" id="cannabinoids" ng-controller="CannabinoidsCtrl">
+        <div class="col-sm-4" ng-repeat="cannabinoid in cannabinoids">
+            <div class="panel panel-white cannabinoid-item" ng-class="{starred: cannabinoid.starred}" ng-include src="'cannabinoidTpl.html'"></div>
+        </div>
+		<!--<div class="col-sm-4">
+			<div class="panel panel-white cannabinoid-item" ng-class="{starred: cannabinoid.starred}" ng-repeat="cannabinoid in cannabinoids2" ng-include src="'cannabinoidTpl.html'"></div>
+		</div>
+        <div class="col-sm-4">
+            <div class="panel panel-white cannabinoid-item" ng-class="{starred: cannabinoid.starred}" ng-repeat="cannabinoid in cannabinoids2" ng-include src="'cannabinoidTpl.html'"></div>
+        </div>-->
+	</div>
+</div>
+<!-- end: YOUR CONTENT HERE

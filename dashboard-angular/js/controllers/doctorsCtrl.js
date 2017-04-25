@@ -1,0 +1,733 @@
+﻿'use strict';
+/** 
+  * controller for Messages
+*/
+app.directive('bootstrapSwitch', [
+        function () {
+            return {
+                restrict: 'A',
+                require: '?ngModel',
+                link: function (scope, element, attrs, ngModel) {
+                    element.bootstrapSwitch();
+
+                    element.on('switchChange.bootstrapSwitch', function (event, state) {
+                        if (ngModel) {
+                            scope.$apply(function () {
+                                ngModel.$setViewValue(state);
+                            });
+                        }
+                    });
+
+                    scope.$watch(attrs.ngModel, function (newValue, oldValue) {
+                        if (newValue) {
+                            element.bootstrapSwitch('state', true, true);
+                        } else {
+                            element.bootstrapSwitch('state', false, true);
+                        }
+                    });
+                }
+            };
+        }
+]).controller('DoctorsCtrl', ["$scope", "$state", "$http", "API", "$aside", "SweetAlert", "ngTableParams", "$location", function ($scope, $state, $http, api, $aside, SweetAlert, ngTableParams, $location) {
+
+    $scope.loadReviews = function (offset, limit) {
+
+        if (!doctor.id)
+            return;
+
+        if (!offset) {
+            offset = 0;
+        }
+
+        if (!limit) {
+            limit = $scope.currentReviewLimit;
+        }
+
+        $.ajax({
+            success: function (response) {
+
+                $scope.reviews = response;
+
+                $scope.$apply();
+            },
+            type: 'get',
+            url: api.host + api.doctors.url + '/' + doctor.id + '/reviews' + '?limit=' + limit + '&offset=' + offset
+        });
+    };
+
+    $scope.getData = function ($defer, params) {
+        $location.search(params.url());
+
+        if ($defer) {
+            $scope.$defer = $defer;
+        }
+
+        if (params) {
+            $scope.params = params;
+        }
+
+        var url = api.host + api.doctors.url;
+
+        var filter = "";
+
+        if ($scope.commonFilter) {
+            filter = "&commonFilter=" + $scope.commonFilter;
+        }
+        $scope.params = params;
+        var offset = params.url().page - 1;
+        offset = offset * params.url().count;
+        $.ajax({
+            success: function (response, textStatus, request) {
+                $scope.totalItems = parseInt(request.getResponseHeader('X-Total-Count'));
+                $scope.params.total($scope.totalItems);
+
+                $defer.resolve(response);
+                $scope.doctors = response;
+                $scope.$apply();
+
+                $.ajax({
+                    success: function (response) {
+                        $scope.usStates = response;
+                        $scope.$apply();
+                    },
+                    type: 'get',
+                    url: api.host + api.usStates.url,
+                })
+            },
+            type: 'get',
+            url: api.host + api.doctors.url + '?limit=' + params.url().count + '&offset=' + offset + filter,
+        });
+    };
+
+    $scope.initTable = function () {
+
+        $scope.tableParams = new ngTableParams(
+    angular.extend({
+        page: 1, // show first page
+        count: 10 // count per page
+    }, $location.search()), {
+        total: $scope.totalItems, // length of data
+        getData: function ($defer, params) {
+            $scope.getData($defer, params);
+        }
+    });
+    };
+
+    $scope.initTable();
+
+    $scope.grades = [
+        { value: "A", text: "A" },
+        { value: "B", text: "B" },
+        { value: "C", text: "C" },
+        { value: "D", text: "D" }
+    ];
+
+    $scope.grade = "A";
+
+    $scope.showGrade = function () {
+        var selected = $filter('filter')($scope.grades, { value: $scope.grade });
+        return ($scope.grade && selected.length) ? selected[0].text : 'Not set';
+    };
+
+
+    $scope.getNewdoctor = function () {
+        return {
+            "name": "",
+            "walkIns": false,
+            "addressLine1": "",
+            "addressLine2": "",
+            "usState": { "code": "CA" },
+            "postcode": "",
+            "phones": "",
+            "coordLat": 30.0,
+            "coordLng": 70.0,
+            "couponMainText": "",
+            "couponExtText": ""
+        }
+    };
+
+    $scope.edit = function ($event, doctor) {
+        $scope.openAside(doctor, false, false, $scope.usStates);
+    };
+
+    $scope.adddoctor = function ($event) {
+        var newdoctor = $scope.getNewdoctor();
+        if (!$scope.usStates) {
+            $.ajax({
+                success: function (response) {
+                    $scope.usStates = response;
+                    $scope.$apply();
+                    $scope.openAside(newdoctor, true, true, $scope.usStates)
+                },
+                type: 'get',
+                url: api.host + api.usStates.url,
+            })
+        }
+        else
+            $scope.openAside(newdoctor, true, true, $scope.usStates)
+    }
+
+    $scope.openReviewsAside = function (doctor) {
+        var _$scope = $scope;
+
+        $aside.open({
+            templateUrl: 'reviewsAsideContent.html',
+            placement: 'right',
+            size: 'md',
+            backdrop: true,
+            controller: function ($scope, $modalInstance) {
+                var __$scope = _$scope;
+
+                $scope.REVIEW_LIMIT = 10;
+
+                if (!doctor.reviewsCount) {
+                    $scope.loadingStop = true;
+                }
+
+                $scope.isRequestLoading = false;
+
+                $scope.lineInView = function () {
+
+                    if ($scope.isRequestLoading)
+                        return;
+
+                    $scope.isRequestLoading = true;
+
+                    if ($scope.loadingStop) {
+                        return;
+                    }
+
+                    if (!$scope.offset) {
+                        $scope.offset = 0;
+                        $scope.reviews = [];
+                    }
+
+                    $.ajax({
+                        success: function (response) {
+
+                            $("body").find("*").scroll(function () {
+
+                                if ($scope.isElementInViewport($('#loading-label'))) {
+                                    $scope.lineInView();
+                                }
+                            });
+
+                            if (response.length < $scope.REVIEW_LIMIT) {
+                                $scope.loadingStop = true;
+                            }
+
+                            //if ($scope.reviews.length > $scope.offset) {
+                            //    return;
+                            //}
+
+                            $scope.reviews = $scope.reviews.concat(response);
+
+                            $scope.offset += $scope.REVIEW_LIMIT;
+
+                            $scope.$apply();
+
+                            $scope.isRequestLoading = false
+
+                            if ($scope.isElementInViewport($('#loading-label'))) {
+                                $scope.lineInView();
+                            }
+
+                            $scope.updateChecks();
+                        },
+                        type: 'get',
+                        url: api.host + api.doctors.url + '/' + doctor.id + '/reviews' + '?limit=' + $scope.REVIEW_LIMIT + '&offset=' + $scope.offset
+                    });
+                };
+
+                $scope.removeReview = function (review) {
+                    $.ajax({
+                        success: function (response) {
+                            $scope.reviews.splice($scope.reviews.indexOf(review), 1);
+                            $scope.$apply();
+                        },
+                        type: 'DELETE',
+                        url: api.host + api.doctors.url + '/' + doctor.id + '/reviews/' + review.id
+                    });
+
+                    doctor.reviewsCount--;
+                }
+
+                $scope.isElementInViewport = function (el) {
+
+                    //special bonus for those using jQuery
+                    if (typeof jQuery === "function" && el instanceof jQuery) {
+                        el = el[0];
+                    }
+
+                    if (!el) {
+                        return;
+                    }
+
+                    var rect = el.getBoundingClientRect();
+
+                    return (
+                        rect.top >= 0 &&
+                        rect.left >= 0 &&
+                        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+                        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+                    );
+                }
+
+                $scope.close = function (e) {
+                    $modalInstance.dismiss();
+                    e.stopPropagation();
+                };
+
+                $('.modal-dialog').on('DOMContentLoaded load resize scroll', function () {
+                    console.log('visibility ' + $scope.isElementInViewport($('#loading-label')));
+                });
+
+                $scope.updateChecks = function () {
+
+                    $('.button-checkbox').each(function () {
+
+                        // Settings
+                        var $widget = $(this),
+                            $button = $widget.find('button'),
+                            $checkbox = $widget.find('input:checkbox'),
+                            color = $button.data('color'),
+                            settings = {
+                                on: {
+                                    icon: 'glyphicon glyphicon-check'
+                                },
+                                off: {
+                                    icon: 'glyphicon glyphicon-unchecked'
+                                }
+                            };
+
+                        $button.unbind("click");
+                        // Event Handlers
+                        $button.on('click', function () {
+
+                            var reviewId = $(this).data('id');
+                            var review = $.grep($scope.reviews, function (e) { return e.id == reviewId; })[0];
+
+                            review.accepted = !review.accepted;
+                            $scope.$apply();
+
+                            $checkbox.triggerHandler('change');
+                            updateDisplay();
+                        });
+
+                        $checkbox.unbind("change");
+
+                        $checkbox.on('change', function () {
+
+                            var reviewId = $(this).data('id');
+
+                            var review = $.grep($scope.reviews, function (e) { return e.id == reviewId; })[0];
+
+                            $scope.$apply();
+
+                            $.ajax({
+                                success: function (response) {
+                                    updateDisplay();
+                                },
+                                data: JSON.stringify(review),
+                                type: 'PUT',
+                                url: api.host + api.doctors.url + '/' + doctor.id + '/reviews/' + reviewId
+                            });
+
+                        });
+
+                        // Actions
+                        function updateDisplay() {
+                            var isChecked = $checkbox.is(':checked');
+
+                            // Set the button's state
+                            $button.data('state', (isChecked) ? "on" : "off");
+
+                            // Set the button's icon
+                            $button.find('.state-icon')
+                                .removeClass()
+                                .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                            // Update the button's color
+                            if (isChecked) {
+                                $button.html('Accepted');
+                                $button
+                                    .removeClass('btn-default')
+                                    .addClass('btn-' + color + ' active');
+                            }
+                            else {
+                                $button.html('Unaccepted');
+                                $button
+                                    .removeClass('btn-' + color + ' active')
+                                    .addClass('btn-default');
+                            }
+
+                            $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                        }
+
+                        // Initialization
+                        function init() {
+
+                            updateDisplay();
+
+                            // Inject the icon if applicable
+                            if ($button.find('.state-icon').length == 0) {
+                                $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                            }
+                        }
+                        init();
+                    });
+                }
+
+                $scope.lineInView();
+            }
+
+        });
+    };
+
+    $scope.openRequestsAside = function (doctor) {
+        var _$scope = $scope;
+
+        $aside.open({
+            templateUrl: 'requestsAsideContent.html',
+            placement: 'right',
+            size: 'md',
+            backdrop: true,
+            controller: function ($scope, $modalInstance) {
+                var __$scope = _$scope;
+
+                $scope.REQUEST_LIMIT = 10;
+
+                //if (!doctor.reviewsCount) {
+                //    $scope.loadingStop = true;
+                //}
+
+                $scope.isRequestLoading = false;
+
+                $scope.lineInView = function () {
+
+                    if ($scope.isRequestLoading)
+                        return;
+
+                    $scope.isRequestLoading = true;
+
+                    if ($scope.loadingStop) {
+                        return;
+                    }
+
+                    if (!$scope.offset) {
+                        $scope.offset = 0;
+                        $scope.requests = [];
+                    }
+
+                    $.ajax({
+                        success: function (response) {
+
+                            $("body").find("*").scroll(function () {
+
+                                if ($scope.isElementInViewport($('#loading-label-requests'))) {
+                                    $scope.lineInView();
+                                }
+                            });
+
+                            if (response.length < $scope.REQUEST_LIMIT) {
+                                $scope.loadingStop = true;
+                            }
+
+                            //if ($scope.reviews.length > $scope.offset) {
+                            //    return;
+                            //}
+
+                            $scope.requests = $scope.requests.concat(response);
+
+                            $scope.offset += $scope.REQUEST_LIMIT;
+
+                            $scope.$apply();
+
+                            $scope.isRequestLoading = false
+
+                            if ($scope.isElementInViewport($('#loading-label'))) {
+                                $scope.lineInView();
+                            }
+                        },
+                        type: 'get',
+                        url: api.host + api.doctors.url + '/' + doctor.id + '/appointments' + '?limit=' + $scope.REQUEST_LIMIT + '&offset=' + $scope.offset
+                    });
+                };
+
+                $scope.removeRequest = function (request) {
+                    $.ajax({
+                        success: function (response) {
+                            $scope.requests.splice($scope.requests.indexOf(request), 1);
+                            $scope.$apply();
+                        },
+                        type: 'DELETE',
+                        url: api.host + api.doctors.url + '/' + doctor.id + '/appointments/' + request.id
+                    });
+
+                    //doctor.reviewsCount--;
+                }
+
+                $scope.isElementInViewport = function (el) {
+
+                    //special bonus for those using jQuery
+                    if (typeof jQuery === "function" && el instanceof jQuery) {
+                        el = el[0];
+                    }
+
+                    if (!el) {
+                        return;
+                    }
+
+                    var rect = el.getBoundingClientRect();
+
+                    return (
+                        rect.top >= 0 &&
+                        rect.left >= 0 &&
+                        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+                        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+                    );
+                }
+
+                $scope.close = function (e) {
+                    $modalInstance.dismiss();
+                    e.stopPropagation();
+                };
+
+                $('.modal-dialog').on('DOMContentLoaded load resize scroll', function () {
+                    console.log('visibility ' + $scope.isElementInViewport($('#loading-label')));
+                });
+
+                $scope.lineInView();
+            }
+
+        });
+    };
+
+    $scope.openAside = function (doctor, editing, adding, usStates) {
+        var _$scope = $scope;
+
+        $aside.open({
+            templateUrl: 'asideContent.html',
+            placement: 'right',
+            size: 'md',
+            backdrop: true,
+            controller: function ($scope, $modalInstance) {
+                var __$scope = _$scope;
+                $scope.editing = editing ? true : false;
+                $scope.adding = adding ? true : false;
+                $scope.usStates = usStates;
+                $scope.edit = function (e) {
+                    $scope.editing = true;
+                    setTimeout(function () {
+                        $scope.doctorform.$show()
+                    }, 300);
+                };
+
+                $scope.currentReviewPage = 1;
+                $scope.currentReviewLimit = 10;
+
+                $scope.isNotValidData = false;
+
+                $scope.map = {
+                    center: {
+                        latitude: doctor.coordLat | 45,
+                        longitude: doctor.coordLng | 73
+                    },
+                    zoom: 11,
+                    markers: [
+                        {
+                            id: Date.now(),
+                            coords: {
+                                latitude: doctor.coordLat,
+                                longitude: doctor.coordLng
+                            }
+                        }
+                    ],
+                    events: {
+                        click: function (map, eventName, originalEventArgs) {
+                            var e = originalEventArgs[0];
+                            var lat = e.latLng.lat(), lon = e.latLng.lng();
+
+                            $scope.doctor.coordLat = lat;
+                            $scope.doctor.coordLng = lon;
+
+                            var marker = {
+                                id: Date.now(),
+                                coords: {
+                                    latitude: lat,
+                                    longitude: lon
+                                }
+                            };
+                            $scope.map.markers = [];
+                            $scope.map.markers.push(marker);
+                            $scope.$apply();
+                        }
+                    }
+                };
+
+                $scope.add = function (e) {
+
+                    var data = {};
+
+                    for (var key in $scope.doctor) {
+                        data[key] = $scope.doctor[key];
+                    };
+
+                    for (var key in $scope.doctorform.$data) {
+                        data[key] = $scope.doctorform.$data[key];
+                    };
+
+                    for (var i = 0; i < data.phones.length; i++) {
+                        data.phones[i] = data.phones[i].text;
+                    }
+
+                    for (var i = 0; i < data.hours.length; i++) {
+                        data.hours[i] = data.hours[i].text;
+                    }
+
+                    if (!data.walkIns) {
+                        data.walkIns = false;
+                    }
+
+                    var url = ''
+                        + api.host
+                        + api.doctors.url;
+
+                    $.post(url, JSON.stringify(data))
+                        .success(function () {
+                            $modalInstance.close();
+                            e.stopPropagation();
+                            $scope.editing = false;
+                        })
+                        .error(function (err) {
+                            $scope.isNotValidData = true;
+                            $scope.$apply();
+                            console.log('error');
+                        });
+
+                };
+
+                $scope.refresh = function (e) {
+                    var data = {};
+
+                    for (var key in $scope.doctor) {
+                        data[key] = $scope.doctor[key];
+                    };
+
+                    for (var key in $scope.doctorform.$data) {
+                        data[key] = $scope.doctorform.$data[key];
+                    };
+
+                    for (var i = 0; i < data.phones.length; i++) {
+                        data.phones[i] = data.phones[i].text;
+                    }
+
+                    for (var i = 0; i < data.hours.length; i++) {
+                        data.hours[i] = data.hours[i].text;
+                    }
+
+                    var req = {
+                        url: ''
+                            + api.host
+                            + api.doctors.url
+                            + '/'
+                            + data.id,
+                        method: 'PUT',
+                        data: JSON.stringify(data),
+                        success: function () {
+                            for (var key in data) {
+                                doctor[key] = data[key];
+                            };
+
+                            $modalInstance.close();
+                            e.stopPropagation();
+                            $scope.editing = false;
+                        },
+                        error: function () {
+                            $scope.isNotValidData = true;
+                        }
+                    };
+
+                    $.ajax(req);
+
+                };
+
+                $scope.save = function (e) {
+                    $scope.isNew = false;
+
+                    if (!$scope.doctor.name ||
+                        !$scope.doctor.postcode ||
+                        !$scope.doctor.hours ||
+                        $scope.doctor.hours.length <= 0 ||
+                        !$scope.doctor.phones ||
+                         $scope.doctor.phones.length <= 0 ||
+                        !$scope.doctor.addressLine1) {
+                        return;
+                    }
+
+                    if ($scope.adding) {
+                        $scope.add(e);
+                    } else {
+                        $scope.refresh(e);
+                    }
+                };
+                $scope.cancel = function (e) {
+                    $modalInstance.dismiss();
+                    e.stopPropagation();
+                };
+
+                if (doctor.id) {
+                    $.ajax({
+                        success: function (response) {
+                            $scope.doctor = response;
+
+                            $scope.$apply();
+                        },
+                        type: 'get',
+                        url: api.host + api.doctors.url + '/' + doctor.id
+                    });
+                }
+                else {
+                    $scope.isNew = true;
+                }
+ 
+                $scope.remove = function (e) {
+                    SweetAlert.swal({
+                        title: "Are you sure?",
+                        text: "Your will not be able to recover this record!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "Cancel",
+                        closeOnConfirm: false,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var url = ''
+                                + api.host
+                                + api.doctors.url
+                                + '/'
+                                + doctor.id;
+                            $.ajax({ url: url, type: 'DELETE' })
+                                .done(function () {
+                                    __$scope.tableParams.reload();
+                                    SweetAlert.swal({
+                                        title: "Deleted!",
+                                        text: "Record has been deleted.",
+                                        type: "success",
+                                        confirmButtonColor: "#007AFF"
+                                    }, function () {
+                                        $modalInstance.close();
+                                    });
+                                })
+                        }
+                    });
+                };
+                if ($scope.editing) {
+                    $scope.edit();
+                }
+            }
+        });
+    };
+}]);

@@ -1,0 +1,143 @@
+<!-- start: PAGE TITLE -->
+<style>
+    .no-scroll {
+        overflow: hidden !important;
+    }
+</style>
+<section id="page-title">
+    <div class="row">
+        <div class="col-sm-8">
+            <h1 class="mainTitle" translate="sidebar.nav.dashboard.CONSUMPTIONMETHODS">{{ mainTitle }}</h1>
+            <!-- <span class="mainDescription">List of consumptionmethods</span> -->
+        </div>
+        <!--<div ncy-breadcrumb></div>-->
+    </div>
+</section>
+<!-- end: PAGE TITLE -->
+<script type="text/ng-template" id="asideContent.html" style="overflow-y: hidden;">
+    <div ng-init="showReviewHtml=false;" ng-show="showReviewHtml" ng-click="showReviewHtml=false;" class="sweet-overlay" tabindex="-1" style="opacity: 1.03; display: block;"></div>
+    <div ng-show="showReviewHtml" class="sweet-alert-custom showSweetAlert visible"
+         tabindex="-1"
+         data-custom-class=""
+         data-has-cancel-button="true"
+         data-has-confirm-button="true"
+         data-allow-ouside-click="true"
+         data-has-done-function="true"
+         data-timer="null"
+         style="display: block; top:220px;">
+        <div text-angular="text-angular" ng-model="consumptionmethod.htmlReviewDesc"></div>
+        <button ng-click="showReviewHtml=false;" class="btn btn-default cancel" tabindex="2" style="display: inline-block; box-shadow: none; margin-top:5px;">Close</button>
+    </div>
+
+    <div ng-init="showFullHtml=false;" ng-show="showFullHtml" ng-click="showFullHtml=false;" class="sweet-overlay" tabindex="-1" style="opacity: 1.03; display: block;"></div>
+    <div ng-show="showFullHtml" class="sweet-alert-custom showSweetAlert visible"
+         tabindex="-1"
+         data-custom-class=""
+         data-has-cancel-button="true"
+         data-has-confirm-button="true"
+         data-allow-ouside-click="true"
+         data-has-done-function="true"
+         data-timer="null"
+         style="display: block; top:220px;">
+        <div text-angular="text-angular" ng-model="consumptionmethod.htmlFullDesc"></div>
+        <button ng-click="showFullHtml=false;" class="btn btn-default cancel" tabindex="2" style="display: inline-block; box-shadow: none; margin-top:5px;">Close</button>
+    </div>
+    
+    <div class="modal-header">
+        <h3 class="modal-title">{{consumptionmethod.name}}</h3>
+        <div class="alert alert-danger" role="alert" ng-show="isNotValidData" ng-init="isNotValidData = false">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Not Valid Data
+        </div>
+    </div>
+    <div class="modal-body container-fluid container-fullw" ng-class="{'no-scroll' : !showCrop}">
+        <div class="fileUpload btn btn-primary">
+            <span><i class="fa fa-pencil"></i></span>
+            <input type="file" class="upload" id="fileInput" />
+        </div>
+
+        <span class="btn btn-success" ng-show="showCrop" ng-click="showCrop=false;"> <i class="fa fa-check"></i> </span>
+        <span class="btn btn-danger" ng-show="showCrop" ng-click="sourceImage='';croppedImage='';"> <i class="fa fa-times"></i> </span>
+        <div class="cropArea" ng-init="showCrop=false" ng-show="showCrop">
+            <img-crop style="background: inherit;" image="sourceImage" result-image="croppedImage" ng-init="croppedImage=''"></img-crop>
+        </div>
+        <div class="method_foto greywhitebottom" style="height: 240px; width: 240px;" ng-if="!obj.flow.files.length && !noImage">
+            <div style="left: 6px; top: 6px; position: absolute; height: 228px; width: 228px; border-radius: 50%; overflow: hidden;">
+                <div class="method_name" style="height: 57px; line-height: 57px; width: 228px;z-index:2;text-align:center;">{{consumptionmethod.name}}</div>
+                <img alt="{{ consumptionmethod.name }}" data-ng-src="{{croppedImage}}" style="position: absolute; height: 228px; width: 228px; border-radius: 50%; overflow: hidden;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div ng-class="{ 'has-error' : !consumptionmethod.name && !isNew  }">
+                <label>Name*</label>
+                <div>
+                    <input style="width:100%;" type="text" ng-model="consumptionmethod.name" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary" ng-click="showReviewHtml = true;">Review HTML Description</button>
+            <button class="btn btn-primary" ng-click="showFullHtml = true;">Full HTML Description</button>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label>Description</label>
+                <textarea rows="20" style="width: 100%" ng-model="consumptionmethod.description"></textarea>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer text-right">
+        <form class="btn-group" editable-form name="consumptionmethodform">
+            <button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+            <button class="btn btn-danger" ng-click="remove($event)"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="consumptionmethodTpl.html">
+    <div class="col-sm-3">
+        <div class="container" style="margin-bottom:20px;">
+            <div class="row">
+                <div class="col-sm-10">
+                    <h4>{{consumptionmethod.name}}</h4>
+                </div>
+                <div class="col-sm-2">
+                    <span style="float: right; position: relative; top: -7px;">
+                        <button class="btn btn-default no-border" ng-click="edit($event, consumptionmethod)"><i class="fa fa-pencil"></i></button>
+                    </span>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div style="height:200px;">
+                    <img alt="{{ consumptionmethod.name }}" ng-src="{{imageHost}}/api/consumptionMethods/{{ consumptionmethod.id }}/image" class="consumptionmethod-item-img bordered border-primary" style="max-width:200px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+<!-- start: YOUR CONTENT HERE -->
+<div class="container-fluid container-fullw bg-white">
+    <div class="row consumptionmethods" id="consumptionmethods" ng-controller="ConsumptionmethodsCtrl">
+        <div class="col-sm-12">
+            <div class="col-sm-3 col-sm-offset-9 text-right" style=" height: 60px;">
+                <button class="btn btn-default" ng-click="addConsumptionmethod()">
+                    <i class="fa fa-plus"></i>
+                    Add consumptionmethod
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="consumptionmethod-item" ng-class="{starred: consumptionmethod.starred}" ng-repeat="consumptionmethod in consumptionmethods" ng-include src="'consumptionmethodTpl.html'"></div>
+        </div>
+    </div>
+</div>
+<!-- end: YOUR CONTENT HERE -->

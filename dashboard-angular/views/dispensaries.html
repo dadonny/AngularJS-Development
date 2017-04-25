@@ -1,0 +1,316 @@
+﻿<style>
+    .pagination {
+        display: block;
+    }
+
+    .btn-group .btn.active {
+        border-color: blue !important;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+
+    .tags {
+        width: 100%;
+        color: black;
+        margin: 0px;
+    }
+
+    tag-item {
+        color: black;
+    }
+
+    tags-input *, tags-input :after, tags-input :before {
+        color: black !important;
+    }
+
+    .input-block {
+        display: inline-block;
+        margin-right: 4px;
+    }
+
+    td.accepted {
+        width:120px;
+    }
+ 
+</style>
+
+<!-- start: PAGE TITLE -->
+<section id="page-title">
+    <div class="row">
+        <div class="col-sm-8">
+
+            <h1 class="mainTitle" translate="sidebar.nav.dashboard.DISPENSARIES">{{ mainTitle }}</h1>
+        </div>
+        <!--<div ncy-breadcrumb></div>-->
+    </div>
+</section>
+<!-- end: PAGE TITLE -->
+<script type="text/ng-template" id="reviewsAsideContent.html">
+    <form name="reviewsform">
+        <div class="modal-header">
+            <h4>Reviews</h4>
+        </div>
+        <div class="modal-body container-fluid container-fullw">
+            <table ng-table="tableParams" class="table table-striped">
+                <tr ng-repeat="review in reviews">
+                    <td class="center">
+                        <img ng-if="review.gender" alt="image" class="img-circle" src="assets/images/avatar-1-small.jpg">
+                        <img ng-if="!review.gender" alt="image" class="img-circle" src="assets/images/avatar-2-small.jpg">
+                    </td>
+                    <td><span class="block"><span class="text-small text-light">{{review.dat | date:'MM/dd/yyyy h:mma '}}</span>{{ review.rewiewer}} </span><span>{{review.reviewText}}</span></td>
+                    <td class="center">
+                        <div class="cl-effect-13">
+                            <button class="btn btn-danger" ng-click="removeReview(review, dispensary)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                    <td class="accepted">
+                        <span class="button-checkbox">
+                            <button type="button" data-id="{{review.id}}" class="btn" data-color="primary">Accepted</button>
+                            <input type="checkbox" data-id="{{review.id}}" class="hidden" ng-checked="review.accepted" />
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-repeat-end">
+                    <td></td>
+                    <td><span id="loading-label" ng-if="!loadingStop">...Loading</span></td>
+                    <td></td>
+                    <td class="accepted"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-footer text-right">
+            <form class="btn-group" editable-form name="dispensaryform">
+                <button class="btn btn-info" ng-click="close($event)">Close</button>
+            </form>
+        </div>
+    </form>
+</script>
+<script type="text/ng-template" id="asideContent.html">
+    <!--<div ng-init="showMap=false;" ng-show="showMap" ng-click="showMap=false;" class="sweet-overlay" tabindex="-1" style="opacity: 1.03; display: block;"></div>
+    <div ng-show="showMap" class="sweet-alert-custom showSweetAlert visible"
+         tabindex="-1"
+         data-custom-class=""
+         data-has-cancel-button="true"
+         data-has-confirm-button="true"
+         data-allow-ouside-click="true"
+         data-has-done-function="true"
+         data-timer="null"
+         style="display: block; top:190px;">
+        <h2>Choose dispensary location</h2>
+        <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" events="map.events">
+            <ui-gmap-marker ng-repeat="m in map.markers" coords="m.coords" icon="m.icon" idkey="m.id"></ui-gmap-marker>
+        </ui-gmap-google-map>
+        <button ng-click="showMap=false;" class="cancel" tabindex="2" style="display: inline-block; box-shadow: none;">OK</button>
+    </div>-->
+    <form name="dispensaryform">
+        <div class="modal-header">
+            <h4>{{dispensary.name}}</h4>
+            <div class="alert alert-danger" role="alert" ng-show="isNotValidData" ng-init="isNotValidData = false">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Not Valid Data
+            </div>
+        </div>
+        <div class="modal-body container-fluid container-fullw">
+            <div class="form-group">
+                <div class="input-block" ng-class="{ 'has-error' : !dispensary.type && !isNew}">
+                    <label>Type*</label>
+                    <div>
+                        <div class="btn-group">
+                            <a href="javascript:void(0)" ng-click="dispensary.type = 'Medical'" ng-class="{ 'active' : dispensary.type == 'Medical' }" class="btn btn-default">Medical</a>
+                            <a href="javascript:void(0)" ng-click="dispensary.type = 'Recreational'" ng-class="{ 'active' : dispensary.type == 'Recreational' }" class="btn btn-default">Recreational</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-block" ng-class="{ 'has-error' : !dispensary.name && !isNew }">
+                    <label>Name*</label>
+                    <div>
+                        <input style="width:360px;" type="text" ng-model="dispensary.name" e-name="name" e-form="dispensaryform" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-block" ng-class="{ 'has-error' : !dispensary.usState && !isNew }">
+                    <label>State*</label>
+                    <div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{dispensary.usState.name}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" style="overflow: scroll; overflow-x: hidden; height: 300px;">
+                                <li ng-repeat="code in usStates"><a href="#" ng-click="dispensary.usState.name = code.name; dispensary.usState.code = code.code;">{{code.name}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-block" ng-class="{ 'has-error' : !dispensary.postcode && !isNew }">
+                    <label>Postcode*</label>
+                    <div>
+                        <input name="postcode" ng-pattern="/^\d\d\d\d\d$/" type="text" ng-model="dispensary.postcode" e-name="postcode" e-form="dispensaryform" />
+                        <span ng-show="dispensaryform.postcode.$error.pattern" style="color:red">Postcode is invalid</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : !dispensary.addressLine1 && !isNew }">
+                <label>Address Line 1*</label>
+                <div>
+                    <input style="width: 100%;" type="text" ng-model="dispensary.addressLine1" e-name="addressLine1" e-form="dispensaryform" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Address Line 2</label>
+                <div>
+                    <input style="width: 100%;" type="text" ng-model="dispensary.addressLine2" e-name="addressLine2" e-form="dispensaryform" />
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : (!dispensary.hours || dispensary.hours.length <= 0) && !isNew }">
+                <div>
+                    <label>Hours*</label>
+                </div>
+                <tags-input ng-model="dispensary.hours"
+                            placeholder="Add a hours"
+                            min-length="1" replace-spaces-with-dashes=false>
+                </tags-input>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error' : (!dispensary.phones || dispensary.phones.length <= 0) && !isNew }">
+                <div>
+                    <label>Phones* </label>
+                </div>
+                <tags-input ng-model="dispensary.phones"
+                            placeholder="Add a phone"
+                            min-length="1">
+                </tags-input>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <label>Discount* </label>
+                    <input checked data-size="small" name="hasDiscount" ng-model="dispensary.hasDiscount" e-name="hasDiscount" e-form="hasDiscount" type="checkbox" bootstrap-switch />
+
+                </div>
+            </div>
+
+
+            <div class="form-group" ng-class="{ 'has-error' : !dispensary.couponExtText && !isNew }">
+                <div ng-if="dispensary.hasDiscount" ng-class="{ 'has-error' : !dispensary.couponExtText && !isNew }">
+                    <label>Discount's Value* </label>
+                    <div>
+                        <input style="width: 100%;" type="text" ng-model="dispensary.couponExtText" e-name="couponExtText" e-form="dispensaryform" />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div ng-if="dispensary.hasDiscount" ng-class="{ 'has-error' : !dispensary.couponMainText && !isNew }">
+                    <label>Discount's Text* </label>
+                    <textarea rows="3" style="width: 100%" ng-model="dispensary.couponMainText" e-name="couponMainText" e-form="dispensaryform"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-block" ng-class="{ 'has-error' : !dispensary.coordLat && !isNew }">
+                    <label>Latitude*</label>
+                    <div>
+                        <input step="any" type="number" ng-model="dispensary.coordLat">
+                    </div>
+                </div>
+                <div class="input-block" ng-class="{ 'has-error' : !dispensary.coordLng && !isNew }">
+                    <label>Longitude*</label>
+                    <div>
+                        <input step="any" type="number" ng-model="dispensary.coordLng">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="modal-footer text-right">
+            <form class="btn-group" editable-form name="dispensaryform">
+                <button class="btn btn-success" ng-click="save($event)"><i class="fa fa-save"></i></button>
+                <button class="btn btn-danger" ng-click="remove($event)"><i class="fa fa-trash"></i></button>
+                <button class="btn btn-info" ng-click="cancel($event)">Cancel</button>
+            </form>
+        </div>
+    </form>
+</script>
+
+<!-- start: YOUR CONTENT HERE -->
+<!-- start: PAGINATION TEMPLATE -->
+<div class="container-fluid container-fullw bg-white">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="container-fluid container-fullw bg-white">
+                <div class="row dispensarys" id="dispensarys" ng-controller="DispensariesCtrl">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3 col-sm-offset-9 text-right">
+                            <button class="btn btn-default" ng-click="addDispensary()">
+                                <i class="fa fa-plus"></i>
+                                Add Dispensary
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-controller="DispensariesCtrl">
+                <div class="search-filter input-group well">
+                    <input type="text" class="form-control ng-valid ng-dirty ng-valid-parse ng-touched" placeholder="Search..." ng-change="params.page(1);params.reload();" ng-model="commonFilter">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fa fa-search"></i> Search
+                        </button>
+                    </span>
+                </div>
+                <table ng-table="tableParams" class="table table-striped">
+                    <tr ng-repeat="dispensary in dispensaries">
+                        <td data-title="'Name'">{{dispensary.name || '' }}</td>
+                        <td data-title="'Type'">{{dispensary.type || '' }}</td>
+                        <td data-title="'State'">{{dispensary.usState.name || '' }}</td>
+                        <td data-title="'Address'">{{dispensary.addressLine1 + ', ' + (dispensary.addressLine2 ? (dispensary.addressLine2 + ', ') : '') + dispensary.postcode  || '' }}</td>
+                        <td data-title="'Raiting Avg'">{{dispensary.rating || '' }}</td>
+                        <td class="text-right" data-title="''">
+                            <button class="btn btn-default" ng-click="edit($event, dispensary)"><i class="fa fa-pencil"></i></button>
+                            <a ng-click="openReviewsAside(dispensary)" class="btn btn-default" href="#" style="background-color: #007AFF;color: white;">Reviews <span class="badge" style=" background-color: white; color: #007AFF;">{{dispensary.reviewsCount}}</span></a>
+                        </td>
+                    </tr>
+                    
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end: PAGINATION TEMPLATE -->
