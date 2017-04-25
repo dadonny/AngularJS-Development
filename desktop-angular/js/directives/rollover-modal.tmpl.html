@@ -1,0 +1,12 @@
+<ion-view style="position: absolute; z-index:9999999;" ng-hide="state.hidden;" class="rollover-modal-animation" >
+
+  <div class="navbuttons" style="    width: 100%;position: fixed;bottom: 30px;padding-left: 50px;z-index: 99;">
+    <div style="margin: auto auto; width:50px;">
+      <button id="slider-prev-button" style="margin:auto auto; pointer-events: all;transform: rotate(90deg);" class="slider-button left "  ng-click="close()"></button>
+    </div>
+  </div>
+
+  <div id="rollovermodal-content" class="rollover-modal bg-rad-grad rollover-modal" ng-include src="state.template"  >
+  </div>
+
+</ion-view>

@@ -1,0 +1,8 @@
+<div class="button" ng-class="sizeClass" ng-click="onClick()" ng-style="{width:overwriteWidth}">
+  <div class="button-inner">
+    <div class="button-image" ng-class="::[icon,iconside]" ng-if="::(iconside=='right')"></div>
+    <div class="button-image " ng-class="::[icon,iconside]" ng-if="::(iconside=='left')"></div>
+    <div class="button-label" ng-if="::label">{{::label}}</div>
+
+  </div>
+</div>

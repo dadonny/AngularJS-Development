@@ -1,0 +1,57 @@
+
+<ion-content class="padding content-fixed-width short" scroll="true">
+  <div class="text-center">
+    <div class="pb-header" ng-hide="user.authed">CREATE PROFILE</div>
+    <div class="pb-header" ng-show="user.authed">CHANGE ACCOUNT INFO</div>
+
+    <div class="row">
+      <count-path ng-hide="user.authed" current-position="2"></count-path>
+    </div>
+    <div class="pb-header" style="font-size:111%" ng-hide="user.authed">Add an email and password to save your recommendations and remember your favorite strains or continue as guest</div>
+    <div class=" col col-offset-25 col-50 col-center" style="padding: 0px; ">
+     <div class="row">
+       <label class="item createprofile-input item-input col" ng-class="{'has-error':errorObj.firstname}">
+         <input type="text" placeholder="First Name (optional)" ng-model="pobject.firstName">
+       </label>
+       <label class="item createprofile-input item-input col " ng-class="{'has-error':errorObj.lastname}">
+         <input type="text" placeholder="Last Name (optional)" ng-model="pobject.lastName">
+       </label>
+     </div>
+
+      <div class="row">
+        <label class="item  createprofile-input item-input col" ng-class="{'has-error':errorObj.email}">
+          <input type="text" placeholder="Email address" ng-model="pobject.email">
+        </label>
+      </div>
+
+      <div class="row" ng-hide="user.authed && user.authed != 'guest'">
+        <label class="item createprofile-input  item-input col" ng-class="{'has-error':errorObj.pass}">
+          <input type="password" placeholder="Password" ng-model="pobject.password">
+        </label>
+      </div>
+
+      <div class="row" ng-hide="user.authed && user.authed != 'guest'">
+        <label class="item createprofile-input  item-input col" ng-class="{'has-error':errorObj.pass2}">
+          <input type="password" placeholder="Confirm password" ng-model="pobject.matchingPassword">
+        </label>
+      </div>
+
+      <div class="pb-header" style="font-size:100%">
+        At PotBotics, your personal privacy is of the utmost importance to us. We guarantee that your information will remain completely anonymous, and can never be directly associated with your name and/or email address.      </div>
+      </div>
+
+  </div>
+
+
+</ion-content>
+<div class="navbuttons" >
+  <div class="text-center" ng-hide="user.authed">
+    <pb-button label="Previous" overwrite-width="250px" ng-click="gotoPrev()" icon="left-arrow" iconside="left" size="S"></pb-button>
+    <span class="button-divider"></span>
+    <pb-button label="Create Profile" overwrite-width="212px" ng-click="createProfile()" icon="" iconside="right" size="S"></pb-button>
+    <pb-button label="Continue as Guest" overwrite-width="285px" ng-click="guest()" icon="right-arrow" iconside="right" size="S"></pb-button>
+  </div>
+  <div class="text-center" ng-show="user.authed">
+    <pb-button label="Save" ng-click="saveUser()" size="S"></pb-button>
+  </div>
+</div>

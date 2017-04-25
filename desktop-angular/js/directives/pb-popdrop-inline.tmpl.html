@@ -1,0 +1,36 @@
+<div style="position: relative;display: inline-block;    height: 20px;line-height: 10px;">
+  <div class="" ng-class="{selected:isOpen}">
+    <div class="clickable "
+         ng-click="openToggle($event)"
+         >
+      <span ng-show="ngModel && ngModel[label]" style="    white-space: nowrap;display: inline-block;">{{ngModel[label]}}</span>
+      <span ng-hide="ngModel && ngModel[label]">{{placeholder}}</span>
+
+      <span ng-show="(direction=='up' && !isOpen) || (direction=='down' && isOpen)" class="icon pb-chevron-s pb-chevron-up-green" style="float:right; padding-right: 10px;margin:0px;"></span>
+      <span ng-show="(direction=='up' && isOpen )  || (direction=='down' && !isOpen)" class="icon pb-chevron-s pb-chevron-down-green" style="float:right; padding-right: 10px;margin:0px;"></span>
+    </div>
+  </div>
+  <div class="triangle manu-animated-opacity" style="top: 15px;width: 180px;z-index: 2;"
+       ng-style="{bottom: (direction=='down')?'15px':'',top: (direction!='down')?'15px':'',opacity:isOpen?1:0}"
+       ng-class="direction"
+       >
+    <ion-scroll zooming="true" direction="y" style=" width:100%; max-height:350px; "
+         class="animated-height"
+         ng-style="{height:isOpen?'350px':'0px'}"
+         >
+     <div  style="" >
+
+        <div class="pb-popdrop-item clickable"
+             ng-click="selectItem(item)"
+             ng-mouseover="item.hover=true"
+             ng-mouseleave="item.hover=false"
+             ng-class="{hovered:item.hover}"
+             ng-repeat="item in items"><span ng-show="item[comparier] && ngModel[comparier]==item[comparier]" class="icon ion-checkmark"></span> {{item[label]}}</div>
+
+    </div>
+    </ion-scroll>
+  </div>
+
+       <!---->
+
+</div>

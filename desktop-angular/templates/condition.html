@@ -1,0 +1,37 @@
+
+<ion-content class="padding content-fixed-width short" scroll="false">
+  <div class="text-center">
+    <div class="pb-header">PLEASE SELECT YOUR <strong>CONDITION</strong></div>
+    <div class="row">
+      <count-path ng-hide="user.authed" current-position="1"></count-path>
+    </div>
+    <div class="content-box col col-offset-25 col-50 col-center" style="padding: 0px; border: 4px solid lightgray;">
+      <!--<ion-checkbox ng-model="item.selected" ng-click="ailmentSelected($event,item)" ng-value="{{item.id}}" ng-repeat="item in ailmentsList">{{item.name}}</ion-checkbox>-->
+      <div class="clickable"
+           ng-class="{acitive:item.selected,'condition-list-item-touch':isTouch,'condition-list-item':!isTouch}"
+           ng-click="ailmentSelected($event,item)"
+           ng-repeat="item in ailmentsList"
+        >
+        {{item.name}}
+        <span ng-show="item.selected" class="checkbox"></span>
+        </div>
+    </div>
+    <div class="col col-offset-25 col-50 col-center">
+
+      <!--<ion-toggle ng-model="airplaneMode" toggle-class="toggle-calm">Do you have a mediacal card?</ion-toggle>-->
+      <span style="    line-height: 36px;font-size: 22px; font-weight: 200;color:gray;float:left;">Do you have a medical cannabis card?</span> <toggle style="float:right;" width="120" label-left="Yes" label-right="No" ng-model="user.hasMedicalCannabisCard" ></toggle>
+    </div>
+  </div>
+
+
+</ion-content>
+<div class="navbuttons">
+  <div class="text-center " ng-hide="user.authed">
+    <pb-button label="Previous" overwrite-width="250px" ng-click="gotoPrev()" icon="left-arrow" iconside="left" size="S"></pb-button>
+    <span class="button-divider"></span>
+    <pb-button label="Next" overwrite-width="250px" ng-click="gotoNext()" icon="right-arrow" iconside="right" size="S"></pb-button>
+  </div>
+  <div class="text-center" ng-show="user.authed">
+    <pb-button label="Save" ng-click="saveUser()" size="S"></pb-button>
+  </div>
+</div>

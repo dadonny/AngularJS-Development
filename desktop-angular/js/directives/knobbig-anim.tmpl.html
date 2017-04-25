@@ -1,0 +1,104 @@
+<div style="width:282px; height: 282px; margin: auto auto; position: relative; pointer-events: all;"  ng-mouseenter="hoverStrain(true)" ng-mouseleave="hoverStrain(false)">
+
+    <!-- BADGE -->
+    <div class="bigknob-badge" ng-class="{hover:matter.hover}" ng-style="{color:matter.hover?'white':matter.type_color, borderColor:matter.type_color, backgroundColor:matter.hover?matter.type_color:'transparent'}">
+        {{matter.type_id}}
+    </div>
+
+    <!-- CENTER -->
+    <div ng-click="showDetails()" class="clickable" style="position: absolute;border-radius: 50%;margin-left: 59px;margin-top: 59px;width: 170px;height: 170px; overflow: hidden">
+
+        <div ng-show="centerImage">
+            <img style="width: 170px;height: 170px;" ng-src="{{::(baseUrl+'/strains/'+matter.id+'/image')}}" alt=""/>
+            <div class=""
+                 ng-class="{greywhitebottom:!matter.hover}"
+                 style="position: absolute; top:110px;width:100%; height:60px;"
+                 ng-style="{'backgroundColor':matter.hover?matter.type_color:''}">
+                <div class="text-center"
+                     ng-style="{color:matter.hover?'white':'#5B5C5E'}"
+                     style="width: 100px;line-height: 1;text-align: center;margin-left: auto;margin-right: auto;margin-top: 10px;">{{matter.name}}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AROUND -->
+    <svg  version="2.3"   style=" pointer-events: none;width: 100%; height: 100%;   -moz-transform: scale(2.4,2.4); transform: scale(2.4, 2.4); transform-origin: left top 0px;" >
+        <defs>
+
+            <linearGradient id="grad-upp" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(211,211,211);stop-opacity:1" />
+            </linearGradient>
+
+            <linearGradient id="grad-down" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(211,211,211);stop-opacity:1" />
+            </linearGradient>
+
+            <linearGradient id="grad-right" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(211,211,211);stop-opacity:1" />
+            </linearGradient>
+
+            <linearGradient id="grad-selected" x1="100%" y1="0%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color:#3AB194;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#CCE211;stop-opacity:1" />
+            </linearGradient>
+
+            <linearGradient id="grad-selected-triangle" x1="100%" y1="0%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color:#6CC267;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#9AD13E;stop-opacity:1" />
+            </linearGradient>
+
+
+        </defs>
+
+
+        <ellipse id="zz" rx="46px" ry="46px" cx="60px" cy="60px"  stroke="url(#grad-upp)" fill="none"  stroke-width="12"
+                ></ellipse>
+
+        <g ng-show="!centerImage">
+            <ellipse rx="36px" ry="36px" cx="60px" cy="60px"  stroke="" fill="url(#grad-down)"  stroke-width="12"></ellipse>
+            <g ng-repeat="part in parts" ng-show="part.selected">
+                <text  text-anchor="middle" x="60" y="65" fill="{{part.color}}" font-size="23px" font-weight="900">{{part.label}}</text>
+                <text  text-anchor="middle" x="60" y="79" fill="#333" font-size="12px" font-weight="200">{{part.containsValue | number:2}}%</text>
+            </g>
+        </g>
+
+        <g ng-repeat="part in parts"
+           class="clickable"
+           style="pointer-events: all"
+           ng-mouseover="hoverMatter(part, true)"
+           ng-mouseleave="hoverMatter(part, false)"
+           >
+            <arc
+                    x="60"
+                    y="60"
+                    radius="52"
+                    width="12"
+                    opacity="{{0.05}}"
+                    swap="{{part.swap}}"
+                    start-angle="{{part.startAngle}}"
+                    end-angle="{{part.endAngle}}"
+                    color="{{part.bgColor}}"
+                    prevent-animation="true"
+                    show="true"></arc>
+            <!---->
+            <!---->
+            <!--ng-click="selectPart(part,matter)"-->
+            <arc
+                    x="60"
+                    y="60"
+                    radius="52"
+                    width="12"
+                    swap="{{part.swap}}"
+                    ng-style="{opacity:opacity}"
+                    start-angle="{{part.startAngle}}"
+                    end-angle="{{part.filledBy}}"
+                    prevent-animation="!matter.animated"
+                    color="{{part.color}}"
+                    show="part.show"></arc>
+
+        </g>
+    </svg>
+</div>

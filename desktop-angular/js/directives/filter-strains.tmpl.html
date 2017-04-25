@@ -1,0 +1,33 @@
+<!--<div class="row" style="    background: #999999; color:white;    height: 55px;font-size: 18px;line-height: 40px;">-->
+  <!--<div class="col text-center ">-->
+    <!--FILTER-->
+    <!--<pb-button class="closefix" style="margin-top: 4px;float:right; margin-left: -60px;" label="" ng-click="filterModal.hide()" icon="clear" iconside="left" size="S"></pb-button>-->
+  <!--</div>-->
+<!--</div>-->
+<div class=" dot-background" style=" padding: 20px;">
+<div  ng-repeat="p in filterParams"  >
+    <div class=" text-highlighted" style="font-size: 18px; width:100%;     margin-bottom: 20px;" >
+      {{p.label}}
+    </div>
+    <div class="">
+      <div ng-repeat="pp in p.params"
+            ng-click="selectFilterItem(p,pp.id)"
+           style="background-color: white; margin-bottom: 4px;padding: 10px; padding-left: 60px; color:#666666; position: relative"
+            class=" clickable ">{{pp.label}} <span ng-if="(p.type!='radio' && pp.id!='0')" ng-style="{color:pp.subLabelColor}">{{pp.subLabel}}</span>
+          <div ng-show="checkIfSelected(p,pp)" style="background-color: #00ae9a; width:50px;height: 100%;float: left; position: absolute; top: 0px; left:0px;border-top-right-radius: 20px;border-bottom-right-radius: 20px;">
+            <span class="ion-checkmark-round" style="color:white; right: 14px; font-size: 20px; top: 8px;    position: absolute;"></span>
+          </div>
+          <span ng-show="p.type=='radio' && checkIfSelected(p,pp)" style="position:absolute; right:10px; padding: 1px 20px; border-radius: 20px;color:white; background-color:#00ae9a ">
+            <span ng-show="p.isDesc && p.selected==pp.id">{{pp.upLabel}}</span> <span ng-show="!p.isDesc && p.selected==pp.id">{{pp.downLabel}}</span>
+          </span>
+      </div>
+    </div>
+
+</div>
+<div class="padding text-center" style="    white-space: nowrap;    height: 40px;" >
+    <pb-button label="Clear" ng-click="clear()" icon="clear" iconside="left" size="S"></pb-button>
+    <pb-button label="Apply" ng-click="apply()" icon="bottom-arrow" iconside="right" size="S"></pb-button>
+</div>
+</div>
+
+

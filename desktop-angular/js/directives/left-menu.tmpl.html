@@ -1,0 +1,95 @@
+<!--overflow: hidden-->
+<div class="gradient-left manu-animated-width leftmenu-action-part"  style="height:100%; padding-top: 1px; position: relative "   ng-style="{width:isOpen*130+70}">
+  <div class="top-menu clickable" style="padding-left: 20px;display: inline-block;" ng-click="switchMenuState()">
+    <span style="font-size: 54px; color:gray;" class="icon ion-navicon"></span>
+
+  </div>
+
+  <!--TOP MENU-->
+  <div ng-show="user.authed">
+    <div class="leftmenu-btn-holder"
+         ng-repeat="item in leftmenuitems.top"
+         ng-click="gotoPage(item.state)"
+         ng-mouseenter="showTooltip(item)">
+      <!--ng-mouseover="item.hover=1"-->
+      <!--ng-mouseleave="item.hover=0">-->
+      <div class="hover-popup-holder" ng-style="{opacity:(item.hover && !isOpen)*1}" >
+        <div class="tri"></div>
+        <div class="hover-popup">
+          {{item.label}}
+        </div>
+      </div>
+      <div class="leftmenu-btn"  >
+        <div class="leftmenu-btn-image" ng-class="item.icon"></div>
+      </div>
+      <div class="leftmenu-btn-label manu-animated-width manu-animated-opacity" ng-style="{width:isOpen*150, opacity:isOpen*1}">{{item.label}}</div>
+    </div>
+  </div>
+
+  <!--BOTTOM MENU-->
+  <div style="bottom: 10px;position: absolute;">
+    <div class="leftmenu-btn-holder"
+         ng-repeat="item in leftmenuitems.bottom"
+         ng-mouseenter="showTooltip(item)">
+         <!--ng-mouseover="item.hover=1"-->
+         <!--ng-mouseleave="item.hover=0">-->
+      <div class="hover-popup-holder" ng-style="{opacity:(item.hover && !isOpen)*1}" >
+        <div class="tri"></div>
+        <div class="hover-popup">
+          {{item.label}}
+        </div>
+      </div>
+      <div class="leftmenu-btn"  ng-click="item.action()">
+        <div class="leftmenu-btn-image" ng-class="item.icon"></div>
+      </div>
+      <div class="leftmenu-btn-label manu-animated-width manu-animated-opacity" ng-style="{width:isOpen*200, opacity:isOpen*1}">{{item.label}}</div>
+    </div>
+  </div>
+
+
+
+
+  <div class="menu-divider"></div>
+</div>
+<div class="top-menu absolute-top leftmenu-action-part" style="    line-height: 60px;">
+  <span class="manu-animated-width" style="display: inline-block;" ng-style="{width:isOpen*130+70}"></span>
+    <!-- LOGO -->
+    <div style="margin-left: 20px;display: inline-block;">
+      <div class="logo-full-small manu-animated-width clickable" ng-style="{width:155}" ng-click="onLogoClicked();"></div>
+    </div>
+
+    <!-- AUTH -->
+    <div  style="display: inline-block;float: right;margin-right: 20px">
+      <div ng-show="user.authed">
+        <div style="position: relative" class="menu-right-block clickable" ng-click="showUserMenu($event)">
+          <span style="    line-height: 30px;height: 36px;display: inline-block;vertical-align: middle;">{{user.guest ? 'Guest' : user.displayName}}</span>
+          <span style="font-size: 20px; padding-left: 4px;" class="icon ion-ios-gear">  </span>
+        </div>
+      </div>
+      <div ng-show="userMenuShown" class="user-menu">
+        <div class="list">
+          <a class="item" href="" ng-click="gotoPage('createprofile')" ng-show="!user.guest">
+            Account
+          </a>
+          <a class="item" href="" ng-click="gotoPage('createprofile')" ng-show="user.guest">
+            Create Account
+          </a>
+          <a class="item" href="" ng-click="gotoPage('personaldata')">
+            Patient Profile
+          </a>
+          <a class="item" href="" ng-click="gotoPage('condition')">
+            Change Ailment
+          </a>
+          <div class="item item-divider" ng-show="user.authed != 'guest'">
+          </div>
+          <a class="item" href="" ng-click="showLogoutModal()" ng-show="user.authed != 'guest'">
+            Log out
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAUNCH -->
+    <div ng-show="isDashboard" class="launchbutton clickable" ng-click="launchPotBot()"> GET RECOMMENDATION</div>
+
+</div>

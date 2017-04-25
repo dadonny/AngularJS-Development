@@ -1,0 +1,39 @@
+<div style="pointer-events: all;">
+
+  <div style="position: relative; margin: auto auto;" ng-click="showDetails()" class="clickable">
+      <!--<svg  version="2.3"   style="width: 240px; height: 240px; " >-->
+        <!--<defs>-->
+
+          <!--<linearGradient id="grad-up" x1="0%" y1="100%" x2="0%" y2="0%">-->
+            <!--<stop offset="0%" style="stop-color:white;stop-opacity:1" />-->
+            <!--<stop offset="100%" style="stop-color:rgb(211,211,211);stop-opacity:1" />-->
+          <!--</linearGradient>-->
+        <!--</defs>-->
+
+        <!--<ellipse rx="120px" ry="120px" cx="120px" cy="120px"  stroke="" fill="url(#grad-up)"  ></ellipse>-->
+      <!--</svg>-->
+
+    <div ng-mouseover="method.mouseover=true" ng-mouseleave="method.mouseover=false;" class="product-list-one-item">
+      <img ng-src="{{baseUrl}}/products/{{method.id}}/image" style="display: block; width: 100%; height: 275px;"/>
+      <div ng-class="'background-gray'" >
+        {{method.name}}
+      </div>
+      <div ng-class="'background-gray'">
+        {{method.company}}
+      </div>
+      <div ng-class="'background-gray'">
+        ${{method.price}}
+      </div>
+      <div ng-class="'background-gray'">
+        See Details
+      </div>
+    </div>
+
+    <!--<div style=" text-align: left;color:#666666;padding-bottom: 60px;">-->
+      <!--{{method.textDesc}}-->
+      <!--<span class="text-highlighted clickable" ng-click="showMore()">Learn more</span>-->
+    <!--</div>-->
+
+  </div>
+
+</div>

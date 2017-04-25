@@ -1,0 +1,43 @@
+<div class="no-strain-plus-holder clickable"
+     style="margin: auto;display: block;    width: 200px;height: 200px;padding: 5px;"
+     ng-click="onClick()"
+     ng-class="{selected:data.selected}"
+     ng-mouseover="mouseover()"
+     ng-mouseleave="mouseout()">
+  <div class="no-strain-plus" style="width: 100%;height: 100%; margin-top: 0px;position: relative; overflow: hidden;"  >
+    <div style="width:100%; height:60px; background-color: #eee; position: absolute;      font-weight: 600;  font-size: 16px;line-height: 70px;" ng-style="{color:data.color}">{{data.name}}</div>
+    <div ng-style="{opacity:editMode?0.7:0}" style="background-color: white; width:100%; height:100%; position: absolute;"></div>
+    <img  ng-show="!mover" style="width: 100%;height: 100%; margin-top: 0px" ng-src="{{baseUrl+'/strains/'+data.id+'/image'}}" alt=""/>
+    <div ng-show="mover" style=" color:white; height: 100%;font-size:12px; padding-top: 70px; text-align: left; line-height: 16px;" ng-style="{background: 'linear-gradient(to right, '+data.grads[0]+', '+data.grads[1]+','+data.grads[1]+')'}">
+      <table style="margin-left: 10%;width: 80%;">
+        <tr>
+          <td  style="width:60px;height: 24px;">
+           <strong>Potency:</strong>
+          </td>
+          <td>
+            {{data.potency}}
+          </td>
+        </tr>
+
+        <tr>
+          <td  style="width:60px;">
+            <strong>Origins:</strong>
+          </td>
+          <td>
+            {{data.origins}}
+          </td>
+        </tr>
+      </table>
+
+      <!--<pb-button style="text-align: center;position: absolute;    bottom: 0px;width: 100%;" ng-hide="editMode" label="More" ng-click="showDetails(data)" size="S" icon="right-arrow" iconside="right"></pb-button>-->
+
+    </div>
+
+    <div style="text-align: center;position: absolute;    bottom: 81px;width: 100%;height: 20px;">
+
+      <pb-button ng-show="editMode" label="Select" size="S" class="button-highlighted"></pb-button>
+    </div>
+  </div>
+  <div class="no-strain-type-label-fav" ng-style="{'background-color':data.color}" ng-style="{zIndex:editMode?-1:1}"> {{data.typeShort}} </div>
+</div>
+<!--<div class="text-highlighted" style="text-align: center;"> {{data.name}} </div>-->

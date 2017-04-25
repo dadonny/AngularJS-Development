@@ -1,0 +1,26 @@
+<div class="toggle-pre-body"
+     ng-click="toggle()"
+     ng-class="{hovered:hovered}"
+     ng-mouseover="mover()"
+     ng-mouseleave="mout()"
+     ng-style="{width:+width+bordersize,height:+size+bordersize,borderRadius: (size+bordersize)/2}">
+  <div
+    class="clickable greywhitebottom toggle-body"
+    ng-style="{borderRadius: (size+bordersize)/2}"
+    >
+    <div class="carret"
+      ng-style="{marginLeft:marginLeft}" >
+      <span class="toggle-label left"
+            ng-style="{lineHeight: size+'px', width: 'calc(100% - '+size+'px)',marginLeft: 'calc(-100% + '+size+'px)'}"
+        >{{labelLeft}}</span>
+
+      <span class="greywhitetop head"
+             ng-style="{width:size, height:size, borderRadius: size/2,left:0}">
+            <span class="greywhitebottom head-center"></span>
+       </span>
+
+      <span class="toggle-label right"
+        ng-style="{left:size,lineHeight: size+'px',width: 'calc(100% - '+size+'px)'}">{{labelRight}}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="row" style="    background: #5B5C5E; color:white">
+  <div class="col col-25">
+    Filter
+
+  </div>
+  <div class="col col-75">
+    Option(s)
+    <pb-button class="closefix" style="float:right" label="" ng-click="filterModal.hide()" icon="clear" iconside="left" size="S"></pb-button>
+  </div>
+</div>
+
+<div class="row" ng-repeat="p in filterParams"  style="background-color: white">
+    <div class="col col-25 text-highlighted" >
+      {{p.label}}
+    </div>
+    <div class="col col-75">
+      <span ng-repeat="pp in p.params"
+            ng-class="checkIfSelected(p,pp)"
+            ng-click="selectFilterItem(p,pp.id)"
+            class=" clickable doctor-filter-item">{{pp.label}}</span>
+    </div>
+</div>
+
+<div class="padding text-center">
+  <pb-button label="Clear" ng-click="clear()" icon="clear" iconside="left" size="M"></pb-button>
+  <pb-button label="Apply" ng-click="apply()" icon="bottom-arrow" iconside="right" size="M"></pb-button>
+</div>
+

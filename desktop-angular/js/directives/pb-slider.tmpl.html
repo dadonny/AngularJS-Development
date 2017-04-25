@@ -1,0 +1,26 @@
+<div  class="pb-slider" style="height:14px;  margin: auto auto;" ng-style="{width:width}">
+
+  <div style="width: 100%;height: 50px;"  class="text-highlighted text-center gender-toggle-label" >{{label}}</div>
+
+  <clickable-element class="bevel bevel-b clickable" ng-mousedown="startDrag($event)">
+    <div class="bevel bevel-a">
+      <div class="bevel bevel-filler" ng-style="{width:headPosition, backgroundSize: width +'px '+ 1+'px'}"></div>
+      <div class="head clickable" ng-style="{left:headPosition}" >
+        <div class="head-center"></div>
+      </div>
+    </div>
+  </clickable-element>
+  <div class="row">
+    <div ng-repeat="p in points track by p.val"
+         class="col col-20 text-center point-holder">
+          <div class="point"
+            ng-style="{backgroundPositionX:p.bgShift}"
+            ng-class="{active:p.val<=value}">
+          </div>
+     </div>
+
+  </div>
+
+  <div style="width: 100%;height: 25px;padding-top: 5px;"  class="text-highlighted text-center gender-toggle-label" >{{points[selectedPoint].label}}</div>
+  <div style="width: 100%;height: 25px;font-weight: 200;"  class=" text-center " >{{points[selectedPoint].desc}}</div>
+</div>

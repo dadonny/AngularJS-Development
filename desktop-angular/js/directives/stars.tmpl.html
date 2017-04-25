@@ -1,0 +1,9 @@
+<div>
+  <img ng-style="{marginRight:(!$last)?'6px':'0px'}"
+       ng-repeat="s in stars"
+       class="star"
+       ng-class="{clickable:isInteractive}"
+       ng-click="setRate(s)"
+       src="img/star0.svg"
+       ng-src="{{'img/'+s.actual}}" alt=""/>
+</div>

@@ -1,0 +1,10 @@
+<div style="  width:100%;  height: 70px;margin-top: 20px;">
+  <div class="col col-80 col-offset-10 count-path" >
+    <div ng-repeat="p in positions track by $index" class="count-path-item" ng-class="{active:$index<=currentPosition}">
+      {{$index+1}}
+      <div style="width:0px;">
+        <div style="width:400px; margin-left: -180px; text-align: center; color: darkgray;">{{p}}</div>
+      </div>
+    </div>
+  </div>
+</div>

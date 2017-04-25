@@ -1,0 +1,49 @@
+<div style="width: 100%;height: 80px;"
+  class="text-highlighted text-center gender-toggle-label" >{{label}}</div>
+<div ng-style="{width:radius*2}" style="margin:auto">
+<circholder class="main-circ-holder" ng-style="{width:radius*2, height:radius*2, borderRadius: radius}"  ng-mousedown="startDrag($event)" >
+
+
+
+  <div class="circ bevel-b-circ clickable">
+    <div class="circ green-circ">
+      <div class="circ bevel-a-circ">
+        <div class="circ main-circ">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</circholder>
+
+  <div class="cs-grad-container">
+
+    <!-- value -->
+    <div class="value-container" ng-style="{left:radius, top:-radius}">
+      <div class="value-holder">
+        <span class="value">{{displayValue}}</span>
+      </div>
+    </div>
+
+    <!-- socket -->
+    <div class="socket-container"   ng-style="{left:radius, top:-radius}">
+      <div class="socket-holder" ng-style="socketHolderStyle">
+        <div class="socket" ng-style="socketStyle"></div>
+      </div>
+    </div>
+
+    <!-- Grads -->
+    <div ng-repeat="g in grads" style=" position: absolute;" ng-style="{top:-radius,left:radius}">
+      <div ng-style="g.style"  class="cs-grad-holder">
+        <div ng-style="{marginLeft : +radius+gradMargin,backgroundPositionX:g.bgShift,background: (g.val>value)?g.grad:undefined }"
+             class="cs-grad-part"
+             ng-class="{active:g.val<=value}"
+             >
+             </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

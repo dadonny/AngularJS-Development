@@ -1,0 +1,58 @@
+<div class="text-center text-highlighted" style="    font-size: 34px;padding: 5px 0px 20px;">FEEDBACK</div>
+<div>
+  <!-- common -->
+  <div class="feedback-item">
+    <span class="feedback-label">PotBot is excited to hear your feedback. Please share your thoughts and suggestions!</span>
+    <div class="greywhitetop form-input">
+      <textarea ng-model="feedback.common" class="greywhitebottom" placeholder="Enter message"></textarea>
+    </div>
+  </div>
+
+  <!-- HOW  -->
+  <div class="feedback-item">
+    <span class="feedback-label">Why did you visit PotBot and how did you hear of us?</span>
+    <div class="greywhitetop form-input">
+      <textarea ng-model="feedback.answer1"  class="greywhitebottom" placeholder="Enter message"></textarea>
+    </div>
+  </div>
+
+  <!-- MEDICAL RECOM.  -->
+  <div class="feedback-item">
+    <span class="feedback-label">Did you find your medical recommendation process efficient and intuitive? How can the recommendations be improved?</span>
+    <div class="greywhitetop form-input">
+      <textarea ng-model="feedback.answer2"  class="greywhitebottom" placeholder="Enter message"></textarea>
+    </div>
+  </div>
+
+  <!-- FEATURES  -->
+  <div class="feedback-item">
+    <span class="feedback-label">What features do you want to see in the next update?</span>
+    <div class="greywhitetop form-input">
+      <textarea ng-model="feedback.answer3"  class="greywhitebottom" placeholder="Enter message"></textarea>
+    </div>
+  </div>
+
+
+  <!-- WOULD RECOMMEND  -->
+  <div class="feedback-item">
+    <span class="feedback-label" style="line-height: 40px;float: left;padding: 0;margin: 0 10px 0 0;">Would you recommend PotBot to a friend?</span>
+      <toggle width="120" label-left="Yes" label-right="No" ng-model="feedback.wantToRecommend" ></toggle>
+  </div>
+
+  <!-- RATING  -->
+  <div class="feedback-item">
+    <span class="feedback-label" style="float:left;  margin: 0 10px 0 0px;">Rate your experience?</span>
+     <stars is-interactive="true" rating="feedback.rating" max="5"></stars>
+  </div>
+
+
+  <!-- WHY RATING  -->
+  <div class="feedback-item">
+    <span class="feedback-label">Why the rating?</span>
+    <div class="greywhitetop form-input">
+      <textarea ng-model="feedback.ratingReason"  class="greywhitebottom" placeholder="Enter message"></textarea>
+    </div>
+  </div>
+
+  <pb-button class="pull-right" label="Submit" ng-click="submit()" icon="right-arrow" iconside="right" size="M"></pb-button>
+</div>
